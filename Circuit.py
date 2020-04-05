@@ -66,7 +66,3 @@ class Circuit():
 
     def get_block_coor(self, iblock):
         return self.circuit[iblock]
-
-    # TODO: fill method
-    def is_wall(self, iblock, point):
-        return False

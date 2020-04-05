@@ -1,15 +1,15 @@
 import numpy as np
 from Car import Car
 from Circuit import Circuit
-from Player import Player
+from Player import Player, Player2
 
 class Controller():
 
     def __init__(self):
         print("Se crea controlador")
         #Instanciate circuit
-        #circuit_list = [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4]
-        circuit_list = [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4]
+        #circuit_list = [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4]
+        circuit_list = [1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1]
         self.circuit = Circuit(circuit_list)
 
         #Build circuit
@@ -18,11 +18,18 @@ class Controller():
         center = self.circuit.limits
 
         self.player1 = Player()
+        self.player2 = Player2()
+
         car1 = Car()
+        car2 = Car()
+
         x0, x1, y0, y1 = self.circuit.get_block_coor(0)
+
         car1.set_coor((x1-x0)/2e0+x0, (y1-y0)/2e0+y0)
+        car2.set_coor((x1-x0)/2e0+x0, (y1-y0)/2e0+y0)
 
         self.player1.register_car(car1)
+        self.player2.register_car(car2)
 
     def car_dist(self,car,desv):
         angle = car.get_angle() + desv
@@ -31,7 +38,7 @@ class Controller():
 
         while not wall:
             x0, x1, y0, y1 = 0e0, 1e0, 0e0, 1e0
-            # x0, x1, y0, y1 = my_circuit.get_block_coor(block)
+
             xlim=x0
             ylim=y0
             if np.cos(angle) >= 0e0:
@@ -51,7 +58,6 @@ class Controller():
 
             if x0 <= x <= x1:
                 wall = True
-               # wall = my_circuit.is_wall(block,x,y0)
 
             else:
                 x = xlim
@@ -63,10 +69,9 @@ class Controller():
                     y = car.get_coor[1]
 
                 wall = True
-               # wall = my_circuit.is_wall(x0,y)
 
             block += 1
-            #if block == my_circuit.nblocks: block = 0
+
         dist = np.sqrt((x-car.get_coor()[0])**2+(y-car.get_coor()[1])**2)
         return dist
 
@@ -107,6 +112,20 @@ class Controller():
                 return
             else:
                 car.block += 1
+                print('block:', car.block)
                 if car.block == self.circuit.nblocks: car.block = 0
 
         car.set_coor(x,y)
+
+    def exec_action(self, player, key):
+        if key == 'U':
+            self.up_button_pressed(player)
+
+        elif key == 'L':
+            self.left_button_pressed(player)
+
+        elif key == 'R':
+            self.right_button_pressed(player)
+
+        elif key == None:
+            self.none_button_pressed(player)

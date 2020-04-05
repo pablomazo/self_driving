@@ -23,12 +23,14 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
+
     screen.fill(BLACK)
 
     #Repainting all circuit
     for block in range(controller.circuit.nblocks):
         x0, _, y0, _ = controller.circuit.get_block_coor(block)
         rect = pygame.Rect(x0, y0, controller.circuit.width, controller.circuit.height)
+
         if block == 0:
             pygame.draw.rect(screen, BLUE, rect)
         else:
@@ -36,20 +38,14 @@ while not done:
 
     #Repainting car
     controller.player1.draw(screen)
+    controller.player2.draw(screen)
 
+    # Get keys pressed by players.
     key = controller.player1.handle_keys()
-    if key == 'U':
-        controller.up_button_pressed(controller.player1)
+    controller.exec_action(controller.player1, key)
 
-    elif key == 'L':
-        controller.left_button_pressed(controller.player1)
-
-    elif key == 'R':
-        controller.right_button_pressed(controller.player1)
-
-    elif key == None:
-        controller.none_button_pressed(controller.player1)
-
+    key = controller.player2.handle_keys()
+    controller.exec_action(controller.player2, key)
 
     pygame.display.update()
 
