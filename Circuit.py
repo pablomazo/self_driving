@@ -13,13 +13,16 @@ class Circuit():
               x0   x1
         '''
         # Height and width of each box.
-        self.height, self.width = 20e0, 20e0
+        self.height, self.width = 60e0, 60e0
 
         # List to build the circuit.
         self.circuit_list = circuit_list
 
         # Number of blocks in circuit:
         self.nblocks = len(self.circuit_list) + 1
+
+        # Register minimum values of x0 and minimum of y0. 
+        self.limits = [1e10, 1e10]
 
     def build_circuit(self):
         '''
@@ -46,6 +49,8 @@ class Circuit():
                 pos = [prev[0], prev[1],
                        prev[3], prev[3] + self.height]
 
+            if pos[0] < self.limits[0]: self.limits[0] = pos[0]
+            if pos[2] < self.limits[1]: self.limits[1] = pos[2]
             self.circuit.append(pos)
 
     def get_block_coor(self, iblock):
