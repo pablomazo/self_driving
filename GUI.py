@@ -18,27 +18,22 @@ done = False
 #Instanciate Controller
 controller = Controller()
 
-center = controller.circuit.limits
-print('center:',center)
-
-x0, _, _, y1 = controller.circuit.get_block_coor(0)
-x0 -= center[0]
-y1 -= center[1]
-
 clock = pygame.time.Clock()
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
     screen.fill(BLACK)
-   
+
     #Repainting all circuit
     for block in range(controller.circuit.nblocks):
-        x0, _, _, y1 = controller.circuit.get_block_coor(block)
-        x0 -= center[0]
-        y1 -= center[1]
-        rect = pygame.Rect(x0, y1, controller.circuit.width, controller.circuit.height)
-        pygame.draw.rect(screen, WHITE, rect)
+        x0, _, y0, _ = controller.circuit.get_block_coor(block)
+        rect = pygame.Rect(x0, y0, controller.circuit.width, controller.circuit.height)
+        if block == 0:
+            pygame.draw.rect(screen, BLUE, rect)
+        else:
+            pygame.draw.rect(screen, WHITE, rect)
+
     #Repainting car
     controller.player1.draw(screen)
 

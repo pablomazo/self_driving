@@ -8,7 +8,8 @@ class Controller():
     def __init__(self):
         print("Se crea controlador")
         #Instanciate circuit
-        circuit_list = [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4]
+        #circuit_list = [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4]
+        circuit_list = [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4]
         self.circuit = Circuit(circuit_list)
 
         #Build circuit
@@ -18,13 +19,12 @@ class Controller():
 
         self.player1 = Player()
         car1 = Car()
-        _, x, _, y = self.circuit.get_block_coor(0)
-        car1.set_coor(x/2e0-center[0],y/2e0-center[1])
+        x0, x1, y0, y1 = self.circuit.get_block_coor(0)
+        print(self.circuit.get_block_coor(0))
+        car1.set_coor((x1-x0)/2e0, (y1-y0)/2e0+y0)
+        print(car1.get_coor())
 
         self.player1.register_car(car1)
-
-
-        
 
     def car_dist(self,car,desv):
         angle = car.get_angle() + desv
@@ -41,7 +41,7 @@ class Controller():
             if np.sin(angle) >= 0e0:
                 ylim = y1
 
-            x = xlim 
+            x = xlim
             y = ylim
 
             if np.abs(np.sin(angle)) > 1e-5:
@@ -101,17 +101,14 @@ class Controller():
         x,y = car.get_coor()
         x += car.vel * np.cos(car.angle)
         y += car.vel * np.sin(car.angle)
-      #  if self.is_out(x,y,car.block):
-      #      if self.is_out(x,y,car.block+1):
-      #          print("is out : ",car.block+1)
-      #          car.vel = 0e0
-      #          return
-      #      else:
-      #          car.block += 1
+        if self.is_out(x,y,car.block):
+            newblock = car.block + 1
+            if newblock == self.circuit.nblocks: newblock = 0
+            if self.is_out(x,y,newblock):
+                car.vel = 0e0
+                return
+            else:
+                car.block += 1
+                if car.block == self.circuit.nblocks: car.block = 0
 
         car.set_coor(x,y)
-
-
-    
-     
-
