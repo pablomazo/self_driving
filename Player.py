@@ -26,7 +26,7 @@ class Player():
             return 'U'
 
     def draw(self, surface):
-        angle = np.degrees(-self.car.get_angle())
+        angle = np.degrees(-self.car.angle)
         coor = self.car.get_coor()
         self.GUI_car = pygame.transform.rotate(self.GUI_car_orig, angle)
         surface.blit(self.GUI_car, coor)

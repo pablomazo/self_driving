@@ -1,12 +1,30 @@
 import numpy as np
 from Car import Car
-#from Circuit import Circuit
+from Circuit import Circuit
+from Player import Player
 
 class Controller():
 
     def __init__(self):
         print("Se crea controlador")
-        #my_circuit = Circuit()
+        #Instanciate circuit
+        circuit_list = [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4]
+        self.circuit = Circuit(circuit_list)
+
+        #Build circuit
+        self.circuit.build_circuit()
+
+        center = self.circuit.limits
+
+        self.player1 = Player()
+        car1 = Car()
+        _, x, _, y = self.circuit.get_block_coor(0)
+        car1.set_coor(x/2e0-center[0],y/2e0-center[1])
+
+        self.player1.register_car(car1)
+
+
+        
 
     def car_dist(self,car,desv):
         angle = car.get_angle() + desv
@@ -50,13 +68,42 @@ class Controller():
                # wall = my_circuit.is_wall(x0,y)
 
             block += 1
-            #if block ==  my_circuit.nblocks: block = 0
+            #if block == my_circuit.nblocks: block = 0
         dist = np.sqrt((x-car.get_coor()[0])**2+(y-car.get_coor()[1])**2)
         return dist
+
+    def is_out(self,car):
+        out = False
+        x0, x1, y0, y1 = my_circuit.get_block_coor(car.get_block)
+        if x1 < car.get_coor()[0] < x0 or y1 < car.get_coor()[1] < y0:
+                out = True
+        return out
+
+    def up_button_pressed(self,player):
+        player.car.vel += player.car.acc
+        self.update_position(player.car)
+
+    def left_button_pressed(self,player):
+        player.car.angle -= player.car.turn
+        self.update_position(player.car)
+
+    def right_button_pressed(self,player):
+        player.car.angle += player.car.turn
+        self.update_position(player.car)
+
+    def none_button_pressed(self,player):
+        player.car.vel = np.amax([0e0, player.car.vel - player.car.acc])
+        self.update_position(player.car)
+
+    def update_position(self,car):
+        x,y = car.get_coor()
+        x += car.vel * np.cos(car.angle)
+        y += car.vel * np.sin(car.angle)
+       # if not self.is_out(car) and self.circuit.is_wall(car.get_coor()):
+        car.set_coor(x,y)
+
 
 
     
      
 
-main_controller = Controller()
-car1 = Car()
