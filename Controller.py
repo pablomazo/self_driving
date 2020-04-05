@@ -101,15 +101,13 @@ class Controller():
         x,y = car.get_coor()
         x += car.vel * np.cos(car.angle)
         y += car.vel * np.sin(car.angle)
-        print(car.block)
-        if self.is_out(x,y,car.block):
-            print("is out : ",car.block)
-            if self.is_out(x,y,car.block+1):
-                print("is out : ",car.block+1)
-                car.vel = 0e0
-                return
-            else:
-                car.block += 1
+      #  if self.is_out(x,y,car.block):
+      #      if self.is_out(x,y,car.block+1):
+      #          print("is out : ",car.block+1)
+      #          car.vel = 0e0
+      #          return
+      #      else:
+      #          car.block += 1
 
         car.set_coor(x,y)
 
