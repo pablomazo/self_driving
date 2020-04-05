@@ -1,10 +1,11 @@
 class Car():
     def __init__(self):
-        self.x = 5e-1
-        self.y = 5e-1
+        self.x = 4e-1
+        self.y = 3e-1
         self.angle = 0e0
         self.vel = 0e0
         self.block = 0e0
+        self.crash = False
 
     def get_coor(self):
         return self.x,self.y
@@ -30,3 +31,9 @@ class Car():
 
     def set_block(self,block):
         self.block = block
+
+    def get_crash(self):
+        return self.crash
+
+    def set_crash(self,crash):
+        self.crash = crash
