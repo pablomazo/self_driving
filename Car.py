@@ -8,7 +8,7 @@ class Car():
         self.crash = False
         self.acc = 5e-1
         #10 degree in radians
-        self.turn = 0.174
+        self.turn = 0.104
 
     def get_coor(self):
         return self.x,self.y
