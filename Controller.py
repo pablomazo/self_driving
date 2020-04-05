@@ -20,9 +20,7 @@ class Controller():
         self.player1 = Player()
         car1 = Car()
         x0, x1, y0, y1 = self.circuit.get_block_coor(0)
-        print(self.circuit.get_block_coor(0))
-        car1.set_coor((x1-x0)/2e0, (y1-y0)/2e0+y0)
-        print(car1.get_coor())
+        car1.set_coor((x1-x0)/2e0+x0, (y1-y0)/2e0+y0)
 
         self.player1.register_car(car1)
 
@@ -50,13 +48,13 @@ class Controller():
             else:
                 x = xlim
                 y = car.get_coor()[1]
-    
+
             if x0 <= x <= x1:
                 wall = True
                # wall = my_circuit.is_wall(block,x,y0)
-    
+
             else:
-                x = xlim 
+                x = xlim
                 y = ylim
                 if np.abs(np.cos(angle)) > 1e-5:
                     y = np.sin(angle)/np.cos(angle)*\

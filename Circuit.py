@@ -22,7 +22,7 @@ class Circuit():
         self.nblocks = len(self.circuit_list) + 1
 
         # Register minimum values of x0 and minimum of y0. 
-        self.limits = [1e10, 1e10]
+        self.limits = [0e0, 0e0]
 
     def build_circuit(self):
         '''
