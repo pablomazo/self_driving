@@ -72,11 +72,11 @@ class Controller():
         dist = np.sqrt((x-car.get_coor()[0])**2+(y-car.get_coor()[1])**2)
         return dist
 
-    def is_out(self,car):
+    def is_out(self,x,y,block):
         out = False
-        x0, x1, y0, y1 = my_circuit.get_block_coor(car.get_block)
-        if x1 < car.get_coor()[0] < x0 or y1 < car.get_coor()[1] < y0:
-                out = True
+        x0, x1, y0, y1 = self.circuit.get_block_coor(block)
+        if x1 < x or x < x0 or y1 < y or y < y0:
+            out = True
         return out
 
     def up_button_pressed(self,player):
@@ -85,10 +85,12 @@ class Controller():
 
     def left_button_pressed(self,player):
         player.car.angle -= player.car.turn
+        player.car.vel = np.amax([0e0, player.car.vel - player.car.acc])
         self.update_position(player.car)
 
     def right_button_pressed(self,player):
         player.car.angle += player.car.turn
+        player.car.vel = np.amax([0e0, player.car.vel - player.car.acc])
         self.update_position(player.car)
 
     def none_button_pressed(self,player):
@@ -99,9 +101,17 @@ class Controller():
         x,y = car.get_coor()
         x += car.vel * np.cos(car.angle)
         y += car.vel * np.sin(car.angle)
-       # if not self.is_out(car) and self.circuit.is_wall(car.get_coor()):
-        car.set_coor(x,y)
+        print(car.block)
+        if self.is_out(x,y,car.block):
+            print("is out : ",car.block)
+            if self.is_out(x,y,car.block+1):
+                print("is out : ",car.block+1)
+                car.vel = 0e0
+                return
+            else:
+                car.block += 1
 
+        car.set_coor(x,y)
 
 
     

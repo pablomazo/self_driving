@@ -4,7 +4,7 @@ class Car():
         self.y = 3e-1
         self.angle = 0e0
         self.vel = 0e0
-        self.block = 0e0
+        self.block = 0
         self.crash = False
         self.acc = 5e-1
         #10 degree in radians
