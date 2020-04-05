@@ -53,6 +53,17 @@ class Circuit():
             if pos[2] < self.limits[1]: self.limits[1] = pos[2]
             self.circuit.append(pos)
 
+        # Translate block to fit on screen:
+        self.translate_circuit()
+
+    def translate_circuit(self):
+        for block in range(self.nblocks):
+            self.circuit[block][0] -= self.limits[0]
+            self.circuit[block][1] -= self.limits[0]
+
+            self.circuit[block][2] -= self.limits[1]
+            self.circuit[block][3] -= self.limits[1]
+
     def get_block_coor(self, iblock):
         return self.circuit[iblock]
 
