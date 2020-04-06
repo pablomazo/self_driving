@@ -109,10 +109,9 @@ class Controller():
             if newblock == self.circuit.nblocks: newblock = 0
             if self.is_out(x,y,newblock):
                 car.vel = 0e0
-                return
+                x,y = car.get_coor()
             else:
                 car.block += 1
-                print('block:', car.block)
                 if car.block == self.circuit.nblocks: car.block = 0
 
         car.set_coor(x,y)
