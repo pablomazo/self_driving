@@ -127,7 +127,7 @@ class GeneticPlayer():
         self.car = a_car
 
     def get_key(self):
-        keys = ['R', 'U', 'L']
+        keys = ['R', 'U', 'L', None]
 
         new_state = np.append(self.state,self.car.vel)
         output = self.network.forward(new_state)

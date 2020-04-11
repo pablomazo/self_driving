@@ -27,7 +27,7 @@ controller = Controller()
 controller.register_genetic(genetic)
 controller.initialize_genetic_players()
 
-for generation in range(50):
+for generation in range(1000):
     print('Generation:', generation)
     controller.reset()
     done = False
