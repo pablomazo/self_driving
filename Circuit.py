@@ -66,3 +66,30 @@ class Circuit():
 
     def get_block_coor(self, iblock):
         return self.circuit[iblock]
+
+    def is_wall(self, x, y, iblock):
+        '''
+        Checks if a point x, y is a wall in the circuit.
+        '''
+
+        # Get where the wall are for this block:
+        # Given the index of this block in "circuit_list",
+        #walls[iblock] gives the walls of this block wrt the
+        #previous block
+        wall = [1,2,3,4]
+
+        wall.remove(self.circuit_list[iblock+1])
+
+        print("Walls at:", wall)
+
+        for elem in wall:
+            if elem == 1 and x - self.circuit[iblock][1] < 1e-5:
+                return True
+            elif elem == 2 and y - self.circuit[iblock][2] < 1e-5:
+                return True
+            elif elem == 3 and x - self.circuit[iblock][0] < 1e-5:
+                return True
+            elif elem == 4 and y - self.circuit[iblock][3] < 1e-5:
+                return True
+
+        return False
