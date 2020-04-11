@@ -32,12 +32,12 @@ class Controller():
         self.player2.register_car(car2)
 
     def car_dist(self,car,desv):
-        angle = car.get_angle() + desv
-        block = car.get_block()
+        angle = car.angle + desv
+        block = car.block
         wall = False
 
         while not wall:
-            x0, x1, y0, y1 = 0e0, 1e0, 0e0, 1e0
+            x0, x1, y0, y1 = self.circuit.circuit[block]
 
             xlim=x0
             ylim=y0
@@ -57,7 +57,7 @@ class Controller():
                 y = car.get_coor()[1]
 
             if x0 <= x <= x1:
-                wall = True
+                wall = self.circuit.is_wall(x,y,block)
 
             else:
                 x = xlim
@@ -68,17 +68,19 @@ class Controller():
                 else:
                     y = car.get_coor[1]
 
-                wall = True
+                wall = self.circuit.is_wall(x,y,block)
 
             block += 1
 
+        print("x: ",x," car x: ",car.get_coor()[0]," y: ",y," car y: ",car.get_coor()[1])
         dist = np.sqrt((x-car.get_coor()[0])**2+(y-car.get_coor()[1])**2)
+        print("dist: ",dist)
         return dist
 
     def is_out(self,x,y,block):
         out = False
         x0, x1, y0, y1 = self.circuit.get_block_coor(block)
-        if x1 < x or x < x0 or y1 < y or y < y0:
+        if x1 <= x or x <= x0 or y1 <= y or y <= y0:
             out = True
         return out
 
@@ -128,3 +130,4 @@ class Controller():
 
         elif key == None:
             self.none_button_pressed(player)
+
