@@ -17,6 +17,3 @@ class NeuralNetwork():
     def forward(self, inputs):
         h1 = self.propagate(inputs, self.w_input, self.b_input)
         return self.propagate(h1, self.w_output, self.b_output)
-
-NN = NeuralNetwork(2,3,4)
-print(NN.forward(NN.input))

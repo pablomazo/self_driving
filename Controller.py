@@ -17,8 +17,8 @@ class Controller():
 
         center = self.circuit.limits
 
-        self.player1 = Player()
         self.player2 = HeuristicPlayer()
+        self.player1 = Player()
         #self.player2 = Player2()
 
         car1 = Car()
