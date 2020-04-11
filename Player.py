@@ -121,7 +121,7 @@ class GeneticPlayer():
         self.crashed = False
         self.max_block = 0
         self.count = 0
-        self.laps = 1
+        self.laps = 0
 
     def register_car(self, a_car):
         self.car = a_car
