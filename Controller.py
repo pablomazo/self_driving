@@ -17,6 +17,8 @@ class Controller():
 
         center = self.circuit.limits
 
+        x0, x1, y0, y1 = self.circuit.get_block_coor(0)
+        self.initial_pos = [(x1-x0)/2e0+x0, (y1-y0)/2e0+y0]
         #self.player2 = HeuristicPlayer()
         #self.player1 = Player()
         #self.player2 = Player2()
@@ -31,19 +33,23 @@ class Controller():
         #self.player1.register_car(car1)
         #self.player2.register_car(car2)
 
+    def reset(self):
+        for i, player in enumerate(self.players):
+            player.reset()
+            player.network = self.genetic.population[i]
+            player.car.reset(self.initial_pos)
+
     def register_genetic(self,genetic):
         self.genetic = genetic
 
     def initialize_genetic_players(self):
         self.players = []
-        x0, x1, y0, y1 = self.circuit.get_block_coor(0)
         for i in range(self.genetic.pop_size):
             player = GeneticPlayer(self.genetic.population[i])
             car = Car()
-            car.set_coor((x1-x0)/2e0+x0, (y1-y0)/2e0+y0)
+            car.set_coor(self.initial_pos[0],self.initial_pos[1])
             player.register_car(car)
             self.players.append(player)
-
 
     def car_dist(self,car,desv):
         angle = car.angle + desv
@@ -160,7 +166,7 @@ class Controller():
         player.state = state
 
     def is_crashed(self, player):
-        if self.car_dist(player.car,0e0) < 1e-1:
+        if self.car_dist(player.car,0e0) < 10e0:
             player.crashed = True
             player.max_block = player.car.block
 

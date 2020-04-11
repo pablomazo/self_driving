@@ -66,9 +66,9 @@ class GA_population():
                     pop_order[j] = tmp
 
                     # Sort array of fitness values.
-                    tmp = fitness[i].copy()
-                    fitness[i] = fitness[j].copy()
-                    fitness[j] = tmp.copy()
+                    tmp = fitness[i]
+                    fitness[i] = fitness[j]
+                    fitness[j] = tmp
 
         self.mating_pool = pop_order[:self.nparents]
 
@@ -98,7 +98,7 @@ class GA_population():
         noffspring = self.pop_size - self.npermanent
         offspring = self.get_offspring(noffspring, parents)
 
-        new_generation.append(noffspring)
+        new_generation += offspring
         self.gen += 1
 
         self.population = new_generation
@@ -143,6 +143,8 @@ class GA_population():
             net.b_output = b_output
 
             offsprings.append(net)
+
+        return offsprings
 
     def crossover_weights(self, weights1, weights2):
         rows, columns = weights1.shape
