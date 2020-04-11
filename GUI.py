@@ -34,16 +34,16 @@ while not done:
             pygame.draw.rect(screen, WHITE, rect)
 
     #Repainting car
-    controller.player1.draw(screen)
-    controller.player2.draw(screen)
+    #controller.player1.draw(screen)
+    #controller.player2.draw(screen)
 
     # Get keys pressed by players.
-    key = controller.player1.handle_keys()
-    controller.exec_action(controller.player1, key)
+    #key = controller.player1.handle_keys()
+    #controller.exec_action(controller.player1, key)
 
-    controller.set_state(controller.player2)
-    key = controller.player2.handle_keys()
-    controller.exec_action(controller.player2, key)
+    #controller.set_state(controller.player2)
+    #key = controller.player2.handle_keys()
+    #controller.exec_action(controller.player2, key)
 
     pygame.display.update()
 

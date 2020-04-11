@@ -5,7 +5,6 @@ class Car():
         self.angle = 0e0
         self.vel = 0e0
         self.block = 0
-        self.crash = False
         self.acc = 1e-1
         #10 degree in radians
         self.turn = 0.104

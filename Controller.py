@@ -1,12 +1,12 @@
 import numpy as np
 from Car import Car
 from Circuit import Circuit
-from Player import Player, Player2, HeuristicPlayer
+from Player import Player, Player2, HeuristicPlayer, GeneticPlayer
+from GA_population import GA_population
 
 class Controller():
 
     def __init__(self):
-        print("Se crea controlador")
         #Instanciate circuit
         #circuit_list = [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4]
         circuit_list = [1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1]
@@ -17,20 +17,33 @@ class Controller():
 
         center = self.circuit.limits
 
-        self.player2 = HeuristicPlayer()
-        self.player1 = Player()
+        #self.player2 = HeuristicPlayer()
+        #self.player1 = Player()
         #self.player2 = Player2()
 
-        car1 = Car()
-        car2 = Car()
+        #car1 = Car()
+        #car2 = Car()
 
+
+        #car1.set_coor((x1-x0)/2e0+x0, (y1-y0)/2e0+y0)
+        #car2.set_coor((x1-x0)/2e0+x0, (y1-y0)/2e0+y0)
+
+        #self.player1.register_car(car1)
+        #self.player2.register_car(car2)
+
+    def register_genetic(self,genetic):
+        self.genetic = genetic
+
+    def initialize_genetic_players(self):
+        self.players = []
         x0, x1, y0, y1 = self.circuit.get_block_coor(0)
+        for i in range(self.genetic.pop_size):
+            player = GeneticPlayer(self.genetic.population[i])
+            car = Car()
+            car.set_coor((x1-x0)/2e0+x0, (y1-y0)/2e0+y0)
+            player.register_car(car)
+            self.players.append(player)
 
-        car1.set_coor((x1-x0)/2e0+x0, (y1-y0)/2e0+y0)
-        car2.set_coor((x1-x0)/2e0+x0, (y1-y0)/2e0+y0)
-
-        self.player1.register_car(car1)
-        self.player2.register_car(car2)
 
     def car_dist(self,car,desv):
         angle = car.angle + desv
@@ -86,37 +99,40 @@ class Controller():
 
     def up_button_pressed(self,player):
         player.car.vel += player.car.acc
-        self.update_position(player.car)
+        self.update_position(player)
 
     def left_button_pressed(self,player):
         player.car.angle -= player.car.turn
         player.car.vel = np.amax([0e0, player.car.vel - player.car.acc])
-        self.update_position(player.car)
+        self.update_position(player)
 
     def right_button_pressed(self,player):
         player.car.angle += player.car.turn
         player.car.vel = np.amax([0e0, player.car.vel - player.car.acc])
-        self.update_position(player.car)
+        self.update_position(player)
 
     def none_button_pressed(self,player):
         player.car.vel = np.amax([0e0, player.car.vel - player.car.acc])
-        self.update_position(player.car)
+        self.update_position(player)
 
-    def update_position(self,car):
-        x,y = car.get_coor()
-        x += car.vel * np.cos(car.angle)
-        y += car.vel * np.sin(car.angle)
-        if self.is_out(x,y,car.block):
-            newblock = car.block + 1
+    def update_position(self,player):
+        x,y = player.car.get_coor()
+        x += player.car.vel * np.cos(player.car.angle)
+        y += player.car.vel * np.sin(player.car.angle)
+        player.count += 1
+        if self.is_out(x,y,player.car.block):
+            newblock = player.car.block + 1
             if newblock == self.circuit.nblocks: newblock = 0
             if self.is_out(x,y,newblock):
-                car.vel = 0e0
-                x,y = car.get_coor()
+                player.car.vel = 0e0
+                x,y = player.car.get_coor()
             else:
-                car.block += 1
-                if car.block == self.circuit.nblocks: car.block = 0
+                player.count = 0
+                player.car.block += 1
+                if player.car.block == self.circuit.nblocks: 
+                    player.car.block = 0
 
-        car.set_coor(x,y)
+        player.car.set_coor(x,y)
 
     def exec_action(self, player, key):
         if key == 'U':
@@ -141,4 +157,9 @@ class Controller():
             state.append(dis)
 
         player.state = state
+
+    def is_crashed(self, player):
+        if self.car_dist(player.car,0e0) < 1e-1:
+            player.crashed = True
+            player.max_block = player.car.block
 
