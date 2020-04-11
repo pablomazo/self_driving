@@ -70,7 +70,7 @@ for generation in range(1000):
         clock.tick(40)
 
     # Get number of blocks each car moved to act as fitness function:
-    fitness = [controller.players[i].max_block * controller.players[i].laps for i in range(genetic.pop_size)]
+    fitness = [controller.players[i].max_block + controller.players[i].laps * controller.circuit.nblocks for i in range(genetic.pop_size)]
     print(fitness)
 
     # Update parameters of each individual:
