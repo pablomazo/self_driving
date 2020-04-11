@@ -17,10 +17,11 @@ done = False
 #Instantiate genetic algorithm
 population = int(sys.argv[1])
 n_father = int(sys.argv[2])
-nI = int(sys.argv[3])
-nH = int(sys.argv[4])
-nO = int(sys.argv[5])
-genetic = GA_population(population,n_father,nI,nH,nO)
+npermanent = int(sys.argv[3])
+nI = int(sys.argv[4])
+nH = int(sys.argv[5])
+nO = int(sys.argv[6])
+genetic = GA_population(population,n_father, npermanent,nI,nH,nO)
 
 #Instanciate Controller
 controller = Controller()
@@ -67,4 +68,4 @@ while not done:
     clock.tick(40)
 
 for i in range(genetic.pop_size):
-    print(controller.players[i].max_block)
+    print(controller.players[i].max_block * controller.players[i].laps)

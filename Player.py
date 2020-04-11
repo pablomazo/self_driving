@@ -115,6 +115,8 @@ class GeneticPlayer():
 
         self.count = 0
 
+        self.laps = 1
+
     def register_car(self, a_car):
         self.car = a_car
 

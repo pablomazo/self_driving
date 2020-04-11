@@ -129,8 +129,9 @@ class Controller():
             else:
                 player.count = 0
                 player.car.block += 1
-                if player.car.block == self.circuit.nblocks: 
+                if player.car.block == self.circuit.nblocks:
                     player.car.block = 0
+                    player.laps += 1
 
         player.car.set_coor(x,y)
 
