@@ -72,9 +72,7 @@ class Controller():
 
             block += 1
 
-        print("x: ",x," car x: ",car.get_coor()[0]," y: ",y," car y: ",car.get_coor()[1])
         dist = np.sqrt((x-car.get_coor()[0])**2+(y-car.get_coor()[1])**2)
-        print("dist: ",dist)
         return dist
 
     def is_out(self,x,y,block):

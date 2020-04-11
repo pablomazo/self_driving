@@ -78,18 +78,16 @@ class Circuit():
         #previous block
         wall = [1,2,3,4]
 
-        wall.remove(self.circuit_list[iblock+1])
-
-        print("Walls at:", wall)
+        wall.remove(self.circuit_list[iblock])
 
         for elem in wall:
-            if elem == 1 and x - self.circuit[iblock][1] < 1e-5:
+            if elem == 1 and abs(x - self.circuit[iblock][1]) < 1e-5:
                 return True
-            elif elem == 2 and y - self.circuit[iblock][2] < 1e-5:
+            elif elem == 2 and abs(y - self.circuit[iblock][2]) < 1e-5:
                 return True
-            elif elem == 3 and x - self.circuit[iblock][0] < 1e-5:
+            elif elem == 3 and abs(x - self.circuit[iblock][0]) < 1e-5:
                 return True
-            elif elem == 4 and y - self.circuit[iblock][3] < 1e-5:
+            elif elem == 4 and abs(y - self.circuit[iblock][3]) < 1e-5:
                 return True
 
         return False
