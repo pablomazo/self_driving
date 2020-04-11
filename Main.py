@@ -62,7 +62,7 @@ for generation in range(1000):
                 controller.set_state(controller.players[i])
                 key = controller.players[i].handle_keys()
                 controller.exec_action(controller.players[i], key)
-                controller.is_crashed(controller.players[i])
+                #controller.is_crashed(controller.players[i])
 
         done = all(crashed)
         pygame.display.update()
