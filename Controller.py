@@ -1,7 +1,7 @@
 import numpy as np
 from Car import Car
 from Circuit import Circuit
-from Player import Player, Player2
+from Player import Player, Player2, HeuristicPlayer
 
 class Controller():
 
@@ -18,7 +18,8 @@ class Controller():
         center = self.circuit.limits
 
         self.player1 = Player()
-        self.player2 = Player2()
+        self.player2 = HeuristicPlayer()
+        #self.player2 = Player2()
 
         car1 = Car()
         car2 = Car()
@@ -71,6 +72,7 @@ class Controller():
                 wall = self.circuit.is_wall(x,y,block)
 
             block += 1
+            if block == self.circuit.nblocks: block = 0
 
         dist = np.sqrt((x-car.get_coor()[0])**2+(y-car.get_coor()[1])**2)
         return dist
@@ -128,4 +130,15 @@ class Controller():
 
         elif key == None:
             self.none_button_pressed(player)
+
+    def set_state(self, player):
+        # Angles
+        angles = [np.pi / 4e0, 0e0, - np.pi / 4e0]
+
+        state = []
+        for angle in angles:
+            dis = self.car_dist(player.car, angle)
+            state.append(dis)
+
+        player.state = state
 

@@ -1,8 +1,5 @@
 import pygame
 import numpy as np
-from Circuit import Circuit
-from Player import Player
-from Car import Car
 from Controller import Controller
 
 WHITE = (255,255,255)
@@ -44,6 +41,7 @@ while not done:
     key = controller.player1.handle_keys()
     controller.exec_action(controller.player1, key)
 
+    controller.set_state(controller.player2)
     key = controller.player2.handle_keys()
     controller.exec_action(controller.player2, key)
 

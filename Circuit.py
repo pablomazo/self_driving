@@ -18,6 +18,14 @@ class Circuit():
         # List to build the circuit.
         self.circuit_list = circuit_list
 
+        # Count number of elements:
+        min_val = 1000000000
+        for elem in range(1,5):
+            tmp_elem = self.circuit_list.count(elem)
+            if tmp_elem < min_val:
+                self.last = elem
+                min_val = tmp_elem
+
         # Number of blocks in circuit:
         self.nblocks = len(self.circuit_list) + 1
 
@@ -73,12 +81,13 @@ class Circuit():
         '''
 
         # Get where the wall are for this block:
-        # Given the index of this block in "circuit_list",
-        #walls[iblock] gives the walls of this block wrt the
-        #previous block
         wall = [1,2,3,4]
 
-        wall.remove(self.circuit_list[iblock])
+        if iblock == self.nblocks - 1:
+            wall.remove(self.last)
+        else:
+            wall.remove(self.circuit_list[iblock])
+
 
         for elem in wall:
             if elem == 1 and abs(x - self.circuit[iblock][1]) < 1e-5:
