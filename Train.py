@@ -27,7 +27,7 @@ controller = Controller()
 controller.load_circuit()
 controller.register_genetic(genetic)
 
-n_change = 10
+n_change = 100
 for generation in range(100000):
     try:
         print('Generation:', generation)
@@ -36,7 +36,6 @@ for generation in range(100000):
         controller.reset()
         done = False
 
-        crashed = [False] * genetic.pop_size
         clock = pygame.time.Clock()
         while not done:
             for event in pygame.event.get():
@@ -55,18 +54,19 @@ for generation in range(100000):
                 else:
                     pygame.draw.rect(screen, WHITE, rect)
 
-            for i in range(genetic.pop_size):
-                crashed[i] = controller.players[i].crashed
-                if controller.players[i].count >= 100:controller.players[i].crashed = True
-                if not controller.players[i].crashed:
+            crashed = []
+            for player in controller.players:
+                crashed.append(player.crashed)
+                end = player.count >= 100 or player.laps >= 10
+                if end: player.crashed = True
+                if not player.crashed:
                     #Repainting car
-                    controller.players[i].draw(screen)
+                    player.draw(screen)
 
                     # Get keys pressed by players.
-                    controller.set_state(controller.players[i])
-                    key = controller.players[i].handle_keys()
-                    controller.exec_action(controller.players[i], key)
-                    #controller.is_crashed(controller.players[i])
+                    controller.set_state(player)
+                    key = player.handle_keys()
+                    controller.exec_action(player, key)
 
             done = all(crashed)
             pygame.display.update()
