@@ -17,6 +17,7 @@ screen = pygame.display.set_mode(screen_size)
 
 #Instanciate Controller
 controller = Controller()
+controller.load_circuit()
 player = HumanPlayer1()
 player2 = HumanPlayer2()
 player3 = HeuristicPlayer()
@@ -28,8 +29,6 @@ controller.register_player(player)
 controller.register_player(player2)
 controller.register_player(player3)
 controller.register_player(player4)
-#controller.register_genetic(genetic)
-#controller.initialize_genetic_players()
 
 done = False
 

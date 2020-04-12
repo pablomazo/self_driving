@@ -1,5 +1,6 @@
+import numpy as np
 class Circuit():
-    def __init__(self, circuit_list):
+    def __init__(self, circuit_id = None):
         '''
         circuit_list tells how the circuit is built.
         The first box will have a fixed position. Then the indexes
@@ -12,11 +13,16 @@ class Circuit():
                  2
               x0   x1
         '''
+
+        circuits =[ [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4], [1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1],[1, 4, 4, 4, 4, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2],[2, 3, 3, 4, 4, 4, 4, 3, 3, 3, 3, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 3, 3, 4, 4, 1, 1, 1, 1, 1, 1, 4, 4, 1, 1, 4, 4, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2],[3, 2, 2, 3, 3, 4, 4, 4, 4, 1, 1, 1, 1, 4, 4, 1, 1, 2, 2, 3, 3, 4, 4, 1, 1, 2, 2, 2, 2, 3, 3, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 3, 3, 4, 4, 3, 3]]
+
         # Height and width of each box.
         self.height, self.width = 60e0, 60e0
 
         # List to build the circuit.
-        self.circuit_list = circuit_list
+        n_circuits = len(circuits)
+        if circuit_id == None or circuit_id >= n_circuits: circuit_id = np.random.randint(n_circuits)
+        self.circuit_list = circuits[circuit_id]
 
         # Count number of elements:
         min_val = 1000000000

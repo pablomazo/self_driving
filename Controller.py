@@ -8,46 +8,38 @@ from GA_population import GA_population
 class Controller():
 
     def __init__(self):
-        #Instanciate circuit
-        #circuit_list = [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4]
-        #circuit_list = [1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1]
-        #circuit_list = [1, 4, 4, 4, 4, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2]
-        circuit_list = [2, 3, 3, 4, 4, 4, 4, 3, 3, 3, 3, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 3, 3, 4, 4, 1, 1, 1, 1, 1, 1, 4, 4, 1, 1, 4, 4, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
-        circuit_list = [3, 2, 2, 3, 3, 4, 4, 4, 4, 1, 1, 1, 1, 4, 4, 1, 1, 2, 2, 3, 3, 4, 4, 1, 1, 2, 2, 2, 2, 3, 3, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 3, 3, 4, 4, 3, 3]
-        self.circuit = Circuit(circuit_list)
-
-        #Build circuit
-        self.circuit.build_circuit()
-
-        center = self.circuit.limits
-
-        x0, x1, y0, y1 = self.circuit.get_block_coor(0)
-        self.initial_pos = [(x1-x0)/2e0+x0, (y1-y0)/2e0+y0]
 
         self.players = []
 
-        orientation_dict = {1: 0e0, 2: -np.pi / 2, 3: np.pi, 4: np.pi / 2}
-        self.orientation = orientation_dict[circuit_list[0]]
 
+    def load_circuit(self, circuit_id = None):
+        self.circuit = Circuit(circuit_id)
+        self.circuit.build_circuit()
+        center =  self.circuit.limits
+        x0, x1, y0, y1 = self.circuit.get_block_coor(0)
+        self.initial_pos = [(x1-x0)/2e0+x0, (y1-y0)/2e0+y0]
+        orientation_dict = {1: 0e0, 2: -np.pi / 2, 3: np.pi, 4: np.pi / 2}
+        self.orientation = orientation_dict[self.circuit.circuit_list[0]]
+        
+
+    
     def reset(self):
         for i, player in enumerate(self.players):
             player.reset()
-            #player.network = self.genetic.population[i]
+            player.network = self.genetic.population[i]
             player.car.reset(self.initial_pos)
+            player.car.angle = self.orientation
 
     def register_genetic(self,genetic):
         self.genetic = genetic
+        for i in range(self.genetic.pop_size):
+            player = GeneticPlayer(self.genetic.population[i])
+            self.register_player(player)
 
     def register_player(self, player):
         player.car.set_coor(self.initial_pos[0],self.initial_pos[1])
         player.car.angle = self.orientation
         self.players.append(player)
-
-    def initialize_genetic_players(self):
-        for i in range(self.genetic.pop_size):
-            player = GeneticPlayer(self.genetic.population[i])
-            player.car.set_coor(self.initial_pos[0],self.initial_pos[1])
-            self.players.append(player)
 
     def car_dist(self,car,desv):
         angle = car.angle + desv

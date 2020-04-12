@@ -24,12 +24,15 @@ genetic = GA_population(population,n_father, npermanent,nI,nH,nO)
 
 #Instanciate Controller
 controller = Controller()
+controller.load_circuit()
 controller.register_genetic(genetic)
-controller.initialize_genetic_players()
 
+n_change = 10
 for generation in range(100000):
     try:
         print('Generation:', generation)
+        if generation % n_change == 0:
+            controller.load_circuit()
         controller.reset()
         done = False
 
