@@ -73,5 +73,11 @@ for generation in range(1000):
     fitness = [controller.players[i].max_block + controller.players[i].laps * controller.circuit.nblocks for i in range(genetic.pop_size)]
     print(fitness)
 
+    # Get id of best individual:
+    best = np.argmax(fitness)
+
+    # Save ckeckpoint of best individual.
+    controller.players[best].network.save_parameters()
+
     # Update parameters of each individual:
     genetic.get_new_generation(fitness)
