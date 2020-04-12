@@ -1,10 +1,19 @@
 import pygame
+from abc import ABC, abstractmethod
 import numpy as np
 import NeuralNetwork as NeuralNetwork
+from Car import Car
 
-class Player():
+class Player(ABC):
     def __init__(self):
-        self.GUI_car_orig = pygame.image.load('./images/car2.png').convert_alpha()
+        self.count = 0
+        self.max_block = 0
+        self.laps = 0
+        self.crashed = False
+        self.car = Car()
+
+    def set_image(self, image_name):
+        self.GUI_car_orig = pygame.image.load(image_name).convert_alpha()
         self.GUI_car_orig = pygame.transform.scale(self.GUI_car_orig, (14, 24))
         self.GUI_car_orig = pygame.transform.rotate(self.GUI_car_orig, -90)
         self.GUI_car = self.GUI_car_orig.copy()
@@ -13,6 +22,34 @@ class Player():
         self.car = a_car
 
     def handle_keys(self):
+        key = self.get_key()
+        return key
+
+    @abstractmethod
+    def get_key(self):
+        pass
+
+    def draw(self, surface):
+        angle = np.degrees(-self.car.angle)
+        x,y = self.car.get_coor()
+        x -= 7
+        y -= 12
+        coor = x, y
+        self.GUI_car = pygame.transform.rotate(self.GUI_car_orig, angle)
+        surface.blit(self.GUI_car, coor)
+
+    def reset(self):
+        self.crashed = False
+        self.max_block = 0
+        self.count = 0
+        self.laps = 0
+
+class HumanPlayer1(Player):
+    def __init__(self):
+        super().__init__()
+        self.set_image('./images/car.png')
+
+    def get_key(self):
         key = pygame.key.get_pressed()
 
         if key[pygame.K_LEFT]:
@@ -24,28 +61,13 @@ class Player():
         if key[pygame.K_UP]:
             return 'U'
 
-    def draw(self, surface):
-        angle = np.degrees(-self.car.angle)
-        x,y = self.car.get_coor()
-        x -= 7
-        y -= 12
-        coor = x, y
-        self.GUI_car = pygame.transform.rotate(self.GUI_car_orig, angle)
-        surface.blit(self.GUI_car, coor)
-
-class Player2():
+class HumanPlayer2(Player):
     def __init__(self):
-        self.GUI_car_orig = pygame.image.load('./images/car.png').convert_alpha()
-        self.GUI_car_orig = pygame.transform.scale(self.GUI_car_orig, (14, 24))
-        self.GUI_car_orig = pygame.transform.rotate(self.GUI_car_orig, -90)
-        self.GUI_car = self.GUI_car_orig.copy()
+        super().__init__()
+        self.set_image('./images/car2.png')
 
-    def register_car(self, a_car):
-        self.car = a_car
-
-    def handle_keys(self):
+    def get_key(self):
         key = pygame.key.get_pressed()
-
         if key[pygame.K_a]:
             return 'L'
 
@@ -55,29 +77,10 @@ class Player2():
         if key[pygame.K_w]:
             return 'U'
 
-    def draw(self, surface):
-        angle = np.degrees(-self.car.angle)
-        x,y = self.car.get_coor()
-        x -= 7
-        y -= 12
-        coor = x, y
-        self.GUI_car = pygame.transform.rotate(self.GUI_car_orig, angle)
-        surface.blit(self.GUI_car, coor)
-
-class HeuristicPlayer():
+class HeuristicPlayer(Player):
     def __init__(self):
-        self.GUI_car_orig = pygame.image.load('./images/car.png').convert_alpha()
-        self.GUI_car_orig = pygame.transform.scale(self.GUI_car_orig, (14, 24))
-        self.GUI_car_orig = pygame.transform.rotate(self.GUI_car_orig, -90)
-        self.GUI_car = self.GUI_car_orig.copy()
-
-        self.state = []
-
-        self.count = 0
-        self.laps = 0
-
-    def register_car(self, a_car):
-        self.car = a_car
+        super().__init__()
+        self.set_image('./images/car2.png')
 
     def get_key(self):
         keys = ['R', 'U', 'L']
@@ -86,48 +89,14 @@ class HeuristicPlayer():
 
         return keys[key_id]
 
-    def handle_keys(self):
-        key = self.get_key()
-
-        return key
-
-
-    def draw(self, surface):
-        angle = np.degrees(-self.car.angle)
-        x,y = self.car.get_coor()
-        x -= 7
-        y -= 12
-        coor = x, y
-        self.GUI_car = pygame.transform.rotate(self.GUI_car_orig, angle)
-        surface.blit(self.GUI_car, coor)
-
-class GeneticPlayer():
+class GeneticPlayer(Player):
     def __init__(self, network):
-        self.GUI_car_orig = pygame.image.load('./images/car2.png').convert_alpha()
-        self.GUI_car_orig = pygame.transform.scale(self.GUI_car_orig, (14, 24))
-        self.GUI_car_orig = pygame.transform.rotate(self.GUI_car_orig, -90)
-        self.GUI_car = self.GUI_car_orig.copy()
+        super().__init__()
+        self.set_image('./images/car.png')
 
         self.state = []
 
         self.network = network
-
-        self.crashed = False
-
-        self.max_block = 0
-
-        self.count = 0
-
-        self.laps = 1
-
-    def reset(self):
-        self.crashed = False
-        self.max_block = 0
-        self.count = 0
-        self.laps = 0
-
-    def register_car(self, a_car):
-        self.car = a_car
 
     def get_key(self):
         keys = ['R', 'U', 'L', None]
@@ -137,18 +106,3 @@ class GeneticPlayer():
         key_id = np.argmax(output)
 
         return keys[key_id]
-
-    def handle_keys(self):
-        key = self.get_key()
-
-        return key
-
-
-    def draw(self, surface):
-        angle = np.degrees(-self.car.angle)
-        x,y = self.car.get_coor()
-        x -= 7
-        y -= 12
-        coor = x, y
-        self.GUI_car = pygame.transform.rotate(self.GUI_car_orig, angle)
-        surface.blit(self.GUI_car, coor)

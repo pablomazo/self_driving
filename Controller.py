@@ -2,7 +2,7 @@ import numpy as np
 from Car import Car
 from Circuit import Circuit
 from NeuralNetwork import NeuralNetwork
-from Player import Player, Player2, HeuristicPlayer, GeneticPlayer
+from Player import HeuristicPlayer, GeneticPlayer
 from GA_population import GA_population
 
 class Controller():
@@ -10,8 +10,10 @@ class Controller():
     def __init__(self):
         #Instanciate circuit
         #circuit_list = [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4]
-        circuit_list = [1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1]
+        #circuit_list = [1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1]
         #circuit_list = [1, 4, 4, 4, 4, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2]
+        circuit_list = [2, 3, 3, 4, 4, 4, 4, 3, 3, 3, 3, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 3, 3, 4, 4, 1, 1, 1, 1, 1, 1, 4, 4, 1, 1, 4, 4, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
+        circuit_list = [3, 2, 2, 3, 3, 4, 4, 4, 4, 1, 1, 1, 1, 4, 4, 1, 1, 2, 2, 3, 3, 4, 4, 1, 1, 2, 2, 2, 2, 3, 3, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 3, 3, 4, 4, 3, 3]
         self.circuit = Circuit(circuit_list)
 
         #Build circuit
@@ -21,39 +23,30 @@ class Controller():
 
         x0, x1, y0, y1 = self.circuit.get_block_coor(0)
         self.initial_pos = [(x1-x0)/2e0+x0, (y1-y0)/2e0+y0]
-        #self.player2 = HeuristicPlayer()
 
-        #net = NeuralNetwork(4, 5, 4)
-        #self.player1 = GeneticPlayer(net)
-        #self.player1.network.load_parameters('saved_models/master1.pickle')
-        #self.player1 = Player()
-        #self.player2 = Player2()
+        self.players = []
 
-        #car1 = Car()
-        #car2 = Car()
-
-        #car1.set_coor(self.initial_pos[0], self.initial_pos[1])
-        #car2.set_coor(self.initial_pos[0], self.initial_pos[1])
-
-        #self.player1.register_car(car1)
-        #self.player2.register_car(car2)
+        orientation_dict = {1: 0e0, 2: -np.pi / 2, 3: np.pi, 4: np.pi / 2}
+        self.orientation = orientation_dict[circuit_list[0]]
 
     def reset(self):
         for i, player in enumerate(self.players):
             player.reset()
-            player.network = self.genetic.population[i]
+            #player.network = self.genetic.population[i]
             player.car.reset(self.initial_pos)
 
     def register_genetic(self,genetic):
         self.genetic = genetic
 
+    def register_player(self, player):
+        player.car.set_coor(self.initial_pos[0],self.initial_pos[1])
+        player.car.angle = self.orientation
+        self.players.append(player)
+
     def initialize_genetic_players(self):
-        self.players = []
         for i in range(self.genetic.pop_size):
             player = GeneticPlayer(self.genetic.population[i])
-            car = Car()
-            car.set_coor(self.initial_pos[0],self.initial_pos[1])
-            player.register_car(car)
+            player.car.set_coor(self.initial_pos[0],self.initial_pos[1])
             self.players.append(player)
 
     def car_dist(self,car,desv):

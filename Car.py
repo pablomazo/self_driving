@@ -1,3 +1,4 @@
+import numpy as np
 class Car():
     def __init__(self):
         self.x = 4e-1
