@@ -73,6 +73,9 @@ class HeuristicPlayer():
 
         self.state = []
 
+        self.count = 0
+        self.laps = 0
+
     def register_car(self, a_car):
         self.car = a_car
 
@@ -100,7 +103,7 @@ class HeuristicPlayer():
 
 class GeneticPlayer():
     def __init__(self, network):
-        self.GUI_car_orig = pygame.image.load('./images/car.png').convert_alpha()
+        self.GUI_car_orig = pygame.image.load('./images/car2.png').convert_alpha()
         self.GUI_car_orig = pygame.transform.scale(self.GUI_car_orig, (14, 24))
         self.GUI_car_orig = pygame.transform.rotate(self.GUI_car_orig, -90)
         self.GUI_car = self.GUI_car_orig.copy()
