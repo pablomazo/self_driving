@@ -7,7 +7,6 @@ from Car import Car
 class Player(ABC):
     def __init__(self):
         self.count = 0
-        self.max_block = 0
         self.laps = 0
         self.crashed = False
         self.car = Car()
@@ -40,7 +39,6 @@ class Player(ABC):
 
     def reset(self):
         self.crashed = False
-        self.max_block = 0
         self.count = 0
         self.laps = 0
 

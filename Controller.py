@@ -122,7 +122,6 @@ class Controller():
             if self.is_out(x,y,newblock):
                 player.car.vel = 0e0
                 player.crashed = True
-                player.max_block = player.car.block
                 x,y = player.car.get_coor()
             else:
                 player.count = 0
@@ -156,9 +155,3 @@ class Controller():
             state.append(dis)
 
         player.state = state
-
-    def is_crashed(self, player):
-        if self.car_dist(player.car,0e0) < 7e0:
-            player.crashed = True
-            player.max_block = player.car.block
-

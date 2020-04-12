@@ -74,7 +74,7 @@ for generation in range(100000):
             clock.tick(40)
 
         # Get number of blocks each car moved to act as fitness function:
-        fitness = [controller.players[i].max_block + controller.players[i].laps * controller.circuit.nblocks for i in range(genetic.pop_size)]
+        fitness = [controller.players[i].car.block + controller.players[i].laps * controller.circuit.nblocks for i in range(genetic.pop_size)]
         print(fitness)
 
         # Get id of best individual:
@@ -89,7 +89,7 @@ for generation in range(100000):
     except KeyboardInterrupt:
         # Save best individual before exiting:
         # Get number of blocks each car moved to act as fitness function:
-        fitness = [controller.players[i].max_block + controller.players[i].laps * controller.circuit.nblocks for i in range(genetic.pop_size)]
+        fitness = [controller.players[i].car.block + controller.players[i].laps * controller.circuit.nblocks for i in range(genetic.pop_size)]
         print('Current fitness before exiting:')
         print(fitness)
 
