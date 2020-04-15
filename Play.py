@@ -17,19 +17,24 @@ screen = pygame.display.set_mode(screen_size)
 
 #Instanciate Controller
 controller = Controller()
-controller.load_circuit(2)
+controller.load_circuit(4)
 player = HumanPlayer1()
 player2 = HumanPlayer2()
 player3 = HeuristicPlayer()
 
+#net = NeuralNetwork(4,5,4)
+#net.load_parameters('./saved_models/master1.pickle')
+#player4 = GeneticPlayer(net)
+
 net = NeuralNetwork(4,5,4)
-net.load_parameters('./saved_models/master1.pickle')
-player4 = GeneticPlayer(net)
+net.load_parameters('./saved_models/master2.pickle')
+player5 = GeneticPlayer(net)
 
 controller.register_player(player)
 controller.register_player(player2)
 controller.register_player(player3)
-controller.register_player(player4)
+#controller.register_player(player4)
+controller.register_player(player5)
 
 done = False
 

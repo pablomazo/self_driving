@@ -84,7 +84,7 @@ class HeuristicPlayer(Player):
         keys = ['R', 'U', 'L']
 
         key_id = np.argmax(self.state)
-        if self.state[1] == 0 :key_id = 2
+        if self.state[1] <= 1e-1 :key_id = 2
 
         return keys[key_id]
 
