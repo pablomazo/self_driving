@@ -17,14 +17,15 @@ screen = pygame.display.set_mode(screen_size)
 
 #Instanciate Controller
 controller = Controller()
-controller.load_circuit()
+controller.load_circuit(2)
 player = HumanPlayer1()
 player2 = HumanPlayer2()
 player3 = HeuristicPlayer()
 
 net = NeuralNetwork(4,5,4)
-net.load_parameters('./saved_models/model1.pickle')
+net.load_parameters('./saved_models/master1.pickle')
 player4 = GeneticPlayer(net)
+
 controller.register_player(player)
 controller.register_player(player2)
 controller.register_player(player3)
@@ -58,7 +59,7 @@ while not done:
         controller.set_state(player)
         key = player.handle_keys()
         controller.exec_action(player, key)
-        controller.is_crashed(player)
+        #controller.is_crashed(player)
 
     pygame.display.update()
 

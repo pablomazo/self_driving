@@ -78,19 +78,20 @@ class HumanPlayer2(Player):
 class HeuristicPlayer(Player):
     def __init__(self):
         super().__init__()
-        self.set_image('./images/car2.png')
+        self.set_image('./images/car3.png')
 
     def get_key(self):
         keys = ['R', 'U', 'L']
 
         key_id = np.argmax(self.state)
+        if self.state[1] == 0 :key_id = 2
 
         return keys[key_id]
 
 class GeneticPlayer(Player):
     def __init__(self, network):
         super().__init__()
-        self.set_image('./images/car.png')
+        self.set_image('./images/car4.png')
 
         self.state = []
 
