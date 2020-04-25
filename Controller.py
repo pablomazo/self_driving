@@ -145,6 +145,19 @@ class Controller():
         elif key == None:
             self.none_button_pressed(player)
 
+    def get_state(self, player):
+        # Angles
+        angles = [np.pi / 4e0, 0e0, - np.pi / 4e0]
+
+        state = []
+        for angle in angles:
+            dis = self.car_dist(player.car, angle)
+            state.append(dis)
+
+        state += [player.car.vel]
+
+        return state
+
     def set_state(self, player):
         # Angles
         angles = [np.pi / 4e0, 0e0, - np.pi / 4e0]
