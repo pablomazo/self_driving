@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 import numpy as np
 import NeuralNetwork as NeuralNetwork
 from Car import Car
+from dqn import DQN
+import random
 
 class Player(ABC):
     def __init__(self):
@@ -105,3 +107,44 @@ class GeneticPlayer(Player):
         key_id = np.argmax(output)
 
         return keys[key_id]
+
+class DQNPlayer(Player, H1, train=False, device='cpu'):
+    def __init__(self, network):
+        super().__init__()
+        self.set_image('./images/car4.png')
+
+        self.state = []
+
+        self.policy = DQN(H1).to(device)
+        self.train = train
+
+        if self.train:
+            self.target = DQN(H1).to(device)
+            self.target.load_state_dict(self.policy.state_dict())
+            self.target.eval()
+
+        else:
+            self.policy.eval()
+
+    def get_key(self):
+        keys = ['R', 'U', 'L', None]
+
+        key_id = self.select_action(self.state)
+
+        return keys[key_id]
+
+    def action_from_key(action):
+        keys = ['R', 'U', 'L', None]
+
+        return keys[action]
+
+    def select_action(self, state, n_action, eps_threshold):
+        sample = random.randon()
+
+        if sample > eps_threshold:
+            with torch.no_grad():
+                state = torch.tensor([state], device=device)
+                return self.policy(state).max(1)[1].view(1,1)
+        else:
+            return torch.tensor([[random.randrange(n_actions]], device=device, dtype=torch.long)
+
