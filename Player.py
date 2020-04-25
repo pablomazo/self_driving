@@ -5,6 +5,7 @@ import NeuralNetwork as NeuralNetwork
 from Car import Car
 from dqn import DQN
 import random
+import torch
 
 class Player(ABC):
     def __init__(self):
@@ -108,8 +109,8 @@ class GeneticPlayer(Player):
 
         return keys[key_id]
 
-class DQNPlayer(Player, H1, train=False, device='cpu'):
-    def __init__(self, network):
+class DQNPlayer(Player):
+    def __init__(self, H1, train=False, device='cpu'):
         super().__init__()
         self.set_image('./images/car4.png')
 
@@ -117,6 +118,7 @@ class DQNPlayer(Player, H1, train=False, device='cpu'):
 
         self.policy = DQN(H1).to(device)
         self.train = train
+        self.device = device
 
         if self.train:
             self.target = DQN(H1).to(device)
@@ -133,18 +135,18 @@ class DQNPlayer(Player, H1, train=False, device='cpu'):
 
         return keys[key_id]
 
-    def action_from_key(action):
+    def key_from_action(self, action):
         keys = ['R', 'U', 'L', None]
 
         return keys[action]
 
-    def select_action(self, state, n_action, eps_threshold):
-        sample = random.randon()
+    def select_action(self, state, n_actions, eps_threshold):
+        sample = random.random()
 
         if sample > eps_threshold:
             with torch.no_grad():
-                state = torch.tensor([state], device=device)
+                state = torch.tensor([state], device=self.device)
                 return self.policy(state).max(1)[1].view(1,1)
         else:
-            return torch.tensor([[random.randrange(n_actions]], device=device, dtype=torch.long)
+            return torch.tensor([[random.randrange(n_actions)]], device=self.device, dtype=torch.long)
 

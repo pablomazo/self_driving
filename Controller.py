@@ -26,7 +26,9 @@ class Controller():
     def reset(self):
         for i, player in enumerate(self.players):
             player.reset()
-            player.network = self.genetic.population[i]
+            if player.__class__.__name__ == 'GeneticPlayer':
+                player.network = self.genetic.population[i]
+
             player.car.reset(self.initial_pos)
             player.car.angle = self.orientation
 

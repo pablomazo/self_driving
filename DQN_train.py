@@ -1,4 +1,3 @@
-from dqn import ReplayMemory
 import pygame
 from Controller import Controller
 import sys
@@ -13,50 +12,56 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-import torchvision.transforms as T
 
-# if gpu is to be used
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+from Player import DQNPlayer
 
-#Create Window
-WHITE = (255,255,255)
-BLUE = (0,0,255)
-BLACK = (0,0,0)
+######################################################################
+# Replay Memory
+# -------------
+#
+# We'll be using experience replay memory for training our DQN. It stores
+# the transitions that the agent observes, allowing us to reuse this data
+# later. By sampling from it randomly, the transitions that build up a
+# batch are decorrelated. It has been shown that this greatly stabilizes
+# and improves the DQN training procedure.
+#
+# For this, we're going to need two classses:
+#
+# -  ``Transition`` - a named tuple representing a single transition in
+#    our environment. It essentially maps (state, action) pairs
+#    to their (next_state, reward) result, with the state being the
+#    screen difference image as described later on.
+# -  ``ReplayMemory`` - a cyclic buffer of bounded size that holds the
+#    transitions observed recently. It also implements a ``.sample()``
+#    method for selecting a random batch of transitions for training.
+#
 
-screen_size = (0, 0)
-pygame.init()
-screen = pygame.display.set_mode(screen_size)
+Transition = namedtuple('Transition',
+                        ('state', 'action', 'next_state', 'reward'))
 
 
-#Instanciate Controller
-controller = Controller()
-controller.load_circuit()
+class ReplayMemory(object):
 
-BATCH_SIZE = 128
-GAMMA = 0.999
-EPS_START = 0.9
-EPS_END = 0.05
-EPS_DECAY = 200
-TARGET_UPDATE = 10
-H1 = 5
-N_ACTIONS = 4
-memory = ReplayMemory(BATCH_SIZE)
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.memory = []
+        self.position = 0
 
-player = DQNPlayer(H1, train = True, device = device)
-controller.register_player(player)
-player = controller.player[0]
+    def push(self, *args):
+        """Saves a transition."""
+        if len(self.memory) < self.capacity:
+            self.memory.append(None)
+        self.memory[self.position] = Transition(*args)
+        self.position = (self.position + 1) % self.capacity
 
-optimizer = optim.RMSprop(player.policy.parameters())
-memory = ReplayMemory(10000)
+    def sample(self, batch_size):
+        return random.sample(self.memory, batch_size)
 
-steps_done = 0
+    def __len__(self):
+        return len(self.memory)
 
-def greedy_policy():
-    global steps_done
-    eps_threshold = EPS_END + (EPS_START - EPS_END) * \
-            math.exp(-1. * steps_done / EPS_DECAY)
-    steps_done += 1
-    return eps_threshold
+
+
 
 ######################################################################
 # Training loop
@@ -121,6 +126,51 @@ def optimize_model(player):
     optimizer.step()
 
 
+
+
+# if gpu is to be used
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+#Create Window
+WHITE = (255,255,255)
+BLUE = (0,0,255)
+BLACK = (0,0,0)
+
+screen_size = (0, 0)
+pygame.init()
+screen = pygame.display.set_mode(screen_size)
+
+
+#Instanciate Controller
+controller = Controller()
+controller.load_circuit()
+
+BATCH_SIZE = 128
+GAMMA = 0.999
+EPS_START = 0.9
+EPS_END = 0.05
+EPS_DECAY = 200
+TARGET_UPDATE = 10
+H1 = 5
+N_ACTIONS = 4
+memory = ReplayMemory(BATCH_SIZE)
+
+player = DQNPlayer(H1, train = True, device = device)
+controller.register_player(player)
+player = controller.players[0]
+
+optimizer = optim.RMSprop(player.policy.parameters())
+memory = ReplayMemory(10000)
+
+steps_done = 0
+
+def greedy_policy():
+    global steps_done
+    eps_threshold = EPS_END + (EPS_START - EPS_END) * \
+            math.exp(-1. * steps_done / EPS_DECAY)
+    steps_done += 1
+    return eps_threshold
+
 ######################################################################
 #
 # Below, you can find the main training loop. At the beginning we reset
@@ -136,8 +186,9 @@ def optimize_model(player):
 
 
 num_episodes = 50
-for i_episode in range(num_episodes):
-      try:
+n_change = 1000
+for i_episode in range(1, num_episodes+1):
+    try:
         print('Episode:', i_episode)
         if i_episode % n_change == 0:
             controller.load_circuit()
@@ -172,12 +223,11 @@ for i_episode in range(num_episodes):
                 state = controller.get_state(player)
 
                 eps_threshold = greedy_policy()
-                player.action = select_action(state, N_ACTIONS, eps_threshold)
+                action = player.select_action(state, N_ACTIONS, eps_threshold)
                 key = player.key_from_action(action)
                 controller.exec_action(player, key)
 
-                done = player.crashed
-                
+
                 if not done:
                     next_state = controller.get_state(player)
                     reward = player.car.block - reward_1
@@ -197,13 +247,17 @@ for i_episode in range(num_episodes):
          
                 # Perform one step of the optimization (on the target network)
                 optimize_model(player)
-    
+
+            done = player.crashed
+            pygame.display.update()
+            clock.tick(40)
         # Update the target network, copying all weights and biases in DQN
         if i_episode % TARGET_UPDATE == 0:
             player.target.load_state_dict(player.policy.state_dict())
 
     except KeyboardInterrupt:
         torch.save(player.policy.state_dict(), "best_dqn_model.pth")
+        sys.exit()
 
 
 
