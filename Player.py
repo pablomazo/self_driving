@@ -131,7 +131,7 @@ class DQNPlayer(Player):
     def get_key(self):
         keys = ['R', 'U', 'L', None]
 
-        key_id = self.select_action(self.state)
+        key_id, _ = self.select_action(self.state)
 
         return keys[key_id]
 
@@ -146,7 +146,9 @@ class DQNPlayer(Player):
         if sample > eps_threshold:
             with torch.no_grad():
                 state = torch.tensor([state], device=self.device)
-                return self.policy(state).max(1)[1].view(1,1)
+                action = self.policy(state).max(1)[1].view(1,1)
+                Q = self.policy(state).max(1)[0].view(1,1)
+                return action, Q
         else:
-            return torch.tensor([[random.randrange(n_actions)]], device=self.device, dtype=torch.long)
+            return torch.tensor([[random.randrange(n_actions)]], device=self.device, dtype=torch.long), None
 

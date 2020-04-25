@@ -8,12 +8,28 @@ import numpy as np
 from collections import namedtuple
 from itertools import count
 
+from IPython import display
+import matplotlib.pyplot as plt
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
 from Player import DQNPlayer
+
+
+def plot_data(id_fig, data, xlabel='', ylabel=''):
+    plt.figure(id_fig)
+    plt.clf()
+    data = np.array(data)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.plot(data[:,0], data[:,1])
+
+    plt.pause(0.001)
+    display.clear_output(wait=True)
+    display.display(plt.gcf())
 
 ######################################################################
 # Replay Memory
@@ -127,6 +143,7 @@ def optimize_model(player):
 
 
 
+plt.ion()
 
 # if gpu is to be used
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -185,10 +202,14 @@ def greedy_policy():
 #
 
 
-num_episodes = 50
-n_change = 1000
+num_episodes = 5000
+n_change = 100000
+reward_per_episode = [] # Total reward per episode.
+av_Q_value = [] # Average Q value per episode.
 for i_episode in range(1, num_episodes+1):
     try:
+        total_reward = 0e0 
+        Q_val = []
         print('Episode:', i_episode)
         if i_episode % n_change == 0:
             controller.load_circuit()
@@ -215,7 +236,7 @@ for i_episode in range(1, num_episodes+1):
                     pygame.draw.rect(screen, WHITE, rect)
 
 
-            end = player.count >= 100 or player.laps >= 10
+            end = player.count >= 1000 or player.laps >= 10
             if end: player.crashed = True
             if not player.crashed:
                 player.draw(screen)
@@ -223,20 +244,24 @@ for i_episode in range(1, num_episodes+1):
                 state = controller.get_state(player)
 
                 eps_threshold = greedy_policy()
-                action = player.select_action(state, N_ACTIONS, eps_threshold)
+                action, Q = player.select_action(state, N_ACTIONS, eps_threshold)
                 key = player.key_from_action(action)
+                aux_count = player.count + 1
                 controller.exec_action(player, key)
 
 
                 if not done:
                     next_state = controller.get_state(player)
-                    reward = player.car.block - reward_1
+                    reward = float(player.car.block - reward_1) / float(aux_count)
+
+                    if player.count >= 1000:
+                        reward = float(-100)
 
                 else:
                     next_state = None
-                    reward = -10
+                    reward = float(-10)
 
-                reward_1 = reward
+                reward_1 = player.car.block
                 reward = torch.tensor([reward], device=device)
                 state = torch.tensor([state], device=device)
                 next_state = torch.tensor([next_state], device=device)
@@ -248,9 +273,23 @@ for i_episode in range(1, num_episodes+1):
                 # Perform one step of the optimization (on the target network)
                 optimize_model(player)
 
+                # Monitor training.
+                total_reward += reward
+                if Q is not None:
+                    Q_val.append(Q)
+
+
             done = player.crashed
             pygame.display.update()
             clock.tick(40)
+
+        # List with highest reward and av Q value.
+        reward_per_episode.append([i_episode, total_reward])
+        Q_val = np.mean(np.array(Q_val))
+        av_Q_value.append([i_episode, Q_val])
+        plot_data(2, reward_per_episode, xlabel='Episode', ylabel='Reward')
+        plot_data(3, av_Q_value, xlabel='Episode', ylabel='Av. Q value')
+
         # Update the target network, copying all weights and biases in DQN
         if i_episode % TARGET_UPDATE == 0:
             player.target.load_state_dict(player.policy.state_dict())
