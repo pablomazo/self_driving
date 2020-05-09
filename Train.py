@@ -17,10 +17,8 @@ screen = pygame.display.set_mode(screen_size)
 population = int(sys.argv[1])
 n_father = int(sys.argv[2])
 npermanent = int(sys.argv[3])
-nI = int(sys.argv[4])
-nH = int(sys.argv[5])
-nO = int(sys.argv[6])
-genetic = GA_population(population,n_father, npermanent,nI,nH,nO)
+nH = int(sys.argv[4])
+genetic = GA_population(population,n_father, npermanent,nH)
 
 #Instanciate Controller
 controller = Controller()
@@ -81,7 +79,7 @@ for generation in range(100000):
         best = np.argmax(fitness)
 
         # Save ckeckpoint of best individual.
-        controller.players[best].network.save_parameters()
+        controller.players[best].save_network(filename='best_genetic.pth')
 
         # Update parameters of each individual:
         genetic.get_new_generation(fitness)
@@ -97,7 +95,7 @@ for generation in range(100000):
         best = np.argmax(fitness)
 
         # Save ckeckpoint of best individual.
-        controller.players[best].network.save_parameters(filename='best.pickle')
-        print('Best player before exit saved in best.pickle with fitness:', fitness[best])
+        controller.players[best].save_network(filename='best_genetic.pth')
+        print('Best player before exit saved in best_genetic.pth with fitness:', fitness[best])
 
         sys.exit()

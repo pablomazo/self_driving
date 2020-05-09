@@ -1,12 +1,13 @@
 import numpy as np
 from NeuralNetworks import FF1H
+import torch
 
 class GA_population():
-    def __init__(self, pop_size, nparents, npermanent, nI, nH, nO):
+    def __init__(self, pop_size, nparents, npermanent, nH):
         '''
         - gen: Generation.
         - pop_size: Number of individuals in population.
-        - nI, nH, nO: Size of input, hidden and ouptut layer.
+        - nH: Hidden layer.
         - nparents: Number of parents used to get the new generation.
         - npermanent: Number of individuals that will continue in the next generation.
 
@@ -18,9 +19,7 @@ class GA_population():
         self.nparents = nparents
         self.npermanent = npermanent
 
-        self.nI = nI
         self.nH = nH
-        self.nO = nO
 
         self.mating_pool = []
         self.population = []
@@ -28,24 +27,8 @@ class GA_population():
         # Generate population.
         for individual in range(self.pop_size):
             net = FF1H(self.nH)
-            self.random_initialize(net)
+            net = net.eval()
             self.population.append(net)
-
-    def random_initialize(self, net):
-        '''
-        Random initialization of the net weights and bias.
-        '''
-        net.w_input = self.generate_gene([self.nI, self.nH])
-        net.b_input = self.generate_gene(self.nH)
-
-        net.w_output = self.generate_gene([self.nH, self.nO])
-        net.b_output = self.generate_gene(self.nO)
-
-    def generate_gene(self, dimension, low=-1e0, high=1e0):
-        '''
-        Generates a random gene of dimension "dimension".
-        '''
-        return np.random.uniform(size=dimension, low=low, high=high)
 
     def get_mating_pool(self, fitness):
         '''
@@ -117,30 +100,25 @@ class GA_population():
             parent1 = np.random.randint(nparents)
             parent2 = np.random.randint(nparents)
 
-            # Cross over weights and bias of parent1 and parent2:
-            w_input = self.crossover_weights(parents[parent1].w_input,
-                                             parents[parent2].w_input)
-
-            b_input = self.crossover_bias(parents[parent1].b_input,
-                                          parents[parent2].b_input)
-
-            w_output = self.crossover_weights(parents[parent1].w_output,
-                                              parents[parent2].w_output)
-
-            b_output = self.crossover_bias(parents[parent1].b_output,
-                                           parents[parent2].b_output)
-
-            # Mutations over weights and bias:
-            w_input = self.mutate_weights(w_input)
-            b_input = self.mutate_bias(b_input)
-            w_output = self.mutate_weights(w_output)
-            b_output = self.mutate_bias(b_output)
-
             net = FF1H(self.nH)
-            net.w_input = w_input
-            net.b_input = b_input
-            net.w_output = w_output
-            net.b_output = b_output
+            for param in net.state_dict().keys():
+                if 'weight' in param:
+                    weight1 = parents[parent1].state_dict()[param].numpy()
+                    weight2 = parents[parent2].state_dict()[param].numpy()
+
+                    new = self.crossover_weights(weight1, weight2)
+
+                    new = self.mutate_weights(new)
+
+                elif 'bias' in param:
+                    bias1 = parents[parent1].state_dict()[param].numpy()
+                    bias2 = parents[parent2].state_dict()[param].numpy()
+
+                    new = self.crossover_bias(bias1, bias2)
+
+                    new = self.mutate_bias(new)
+
+                net.state_dict()[param] = torch.from_numpy(new)
 
             offsprings.append(net)
 

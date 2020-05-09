@@ -101,11 +101,18 @@ class GeneticPlayer(Player):
     def get_key(self):
         keys = ['R', 'U', 'L', None]
 
-        new_state = np.append(self.state,self.car.vel)
-        output = self.network.forward(new_state)
-        key_id = np.argmax(output)
+        with torch.no_grad():
+            new_state = torch.tensor(np.append(self.state,self.car.vel), dtype=torch.float)
+            output = self.network(new_state)
+            key_id = output.max(0)[1]
 
         return keys[key_id]
+
+    def save_network(self, filename='genetic_network.pth'):
+        tosave = {}
+        tosave['structure'] = self.network.structure
+        tosave['state_dict'] = self.network.state_dict()
+        torch.save(tosave, filename)
 
 class DQNPlayer(Player):
     def __init__(self, H1, train=False, device='cpu', model='best_model.pth'):
@@ -151,4 +158,11 @@ class DQNPlayer(Player):
                 return action, Q
         else:
             return torch.tensor([[random.randrange(n_actions)]], device=self.device, dtype=torch.long), None
+
+    def save_network(self, filename='DQN_network.pth'):
+        tosave = {}
+        tosave['structure'] = self.network.structure
+        tosave['state_dict'] = self.network.state_dict()
+        torch.save(tosave, filename)
+
 

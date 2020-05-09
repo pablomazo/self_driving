@@ -7,18 +7,20 @@ class FF1H(nn.Module):
 
     def __init__(self, h1):
         super(FF1H, self).__init__()
+        self.structure = [h1]
         self.linear1 = nn.Linear(4, h1)
         self.linear2 = nn.Linear(h1, 4)
     
     def forward(self, x): 
-        x = F.sigmoid(self.linear1(x))
-        x = F.sigmoid(self.linear2(x))
+        x = torch.sigmoid(self.linear1(x))
+        x = torch.sigmoid(self.linear2(x))
         return x
 
 class FF2H_relu(nn.Module):
 
     def __init__(self, h1, h2):
         super(FF2H_relu, self).__init__()
+        self.structure = [h1,h2]
         self.linear1 = nn.Linear(4, h1)
         self.linear2 = nn.Linear(h1, h2)
         self.linear3 = nn.Linear(h2, 4)
@@ -34,13 +36,14 @@ class FF2H_sigmoid(nn.Module):
 
     def __init__(self, h1, h2):
         super(FF2H_sigmoid, self).__init__()
+        self.structure = [h1,h2]
         self.linear1 = nn.Linear(4, h1)
         self.linear2 = nn.Linear(h1, h2)
         self.linear3 = nn.Linear(h2, 4)
     
     def forward(self, x):
-        x = F.sigmoid(self.linear1(x))
-        x = F.sigmoid(self.linear2(x))
+        x = torch.sigmoid(self.linear1(x))
+        x = torch.sigmoid(self.linear2(x))
         x = self.linear3(x)
         return x
 
