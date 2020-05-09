@@ -15,10 +15,10 @@ class FF1H(nn.Module):
         x = F.sigmoid(self.linear2(x))
         return x
 
-class FFH2_relu(nn.Module):
+class FF2H_relu(nn.Module):
 
     def __init__(self, h1, h2):
-        super(FFH2_relu, self).__init__()
+        super(FF2H_relu, self).__init__()
         self.linear1 = nn.Linear(4, h1)
         self.linear2 = nn.Linear(h1, h2)
         self.linear3 = nn.Linear(h2, 4)
@@ -30,10 +30,10 @@ class FFH2_relu(nn.Module):
         return x
 
 
-class FFH2_sigmoid(nn.Module):
+class FF2H_sigmoid(nn.Module):
 
     def __init__(self, h1, h2):
-        super(FFH2_sigmoid, self).__init__()
+        super(FF2H_sigmoid, self).__init__()
         self.linear1 = nn.Linear(4, h1)
         self.linear2 = nn.Linear(h1, h2)
         self.linear3 = nn.Linear(h2, 4)

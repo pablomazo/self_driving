@@ -1,9 +1,7 @@
 import pygame
 from abc import ABC, abstractmethod
 import numpy as np
-import NeuralNetwork as NeuralNetwork
 from Car import Car
-from dqn import DQN
 import random
 import torch
 
@@ -110,7 +108,7 @@ class GeneticPlayer(Player):
         return keys[key_id]
 
 class DQNPlayer(Player):
-    def __init__(self, H1, train=False, device='cpu'):
+    def __init__(self, H1, train=False, device='cpu', model='best_model.pth'):
         super().__init__()
         self.set_image('./images/car4.png')
 
@@ -126,12 +124,14 @@ class DQNPlayer(Player):
             self.target.eval()
 
         else:
+            self.policy.load_state_dict(torch.load(model, map_location='cpu'))
             self.policy.eval()
 
     def get_key(self):
         keys = ['R', 'U', 'L', None]
 
-        key_id, _ = self.select_action(self.state)
+        new_state = np.append(self.state,self.car.vel)
+        key_id, _ = self.select_action(new_state)
 
         return keys[key_id]
 
@@ -140,14 +140,14 @@ class DQNPlayer(Player):
 
         return keys[action]
 
-    def select_action(self, state, n_actions, eps_threshold):
+    def select_action(self, state, n_actions=None, eps_threshold=0e0):
         sample = random.random()
 
         if sample > eps_threshold:
             with torch.no_grad():
-                state = torch.tensor([state], device=self.device)
+                state = torch.tensor([state], device=self.device, dtype=torch.float)
                 action = self.policy(state).max(1)[1].view(1,1)
-                Q = self.policy(state).max(1)[0].view(1,1)
+                Q = self.policy(state).max(1)[0]
                 return action, Q
         else:
             return torch.tensor([[random.randrange(n_actions)]], device=self.device, dtype=torch.long), None

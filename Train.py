@@ -55,7 +55,7 @@ for generation in range(100000):
                     pygame.draw.rect(screen, WHITE, rect)
 
             crashed = []
-            for player in controller.players:
+            for i, player in enumerate(controller.players):
                 crashed.append(player.crashed)
                 end = player.count >= 100 or player.laps >= 10
                 if end: player.crashed = True

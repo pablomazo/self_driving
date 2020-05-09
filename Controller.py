@@ -1,7 +1,6 @@
 import numpy as np
 from Car import Car
 from Circuit import Circuit
-from NeuralNetwork import NeuralNetwork
 from Player import HeuristicPlayer, GeneticPlayer
 from GA_population import GA_population
 

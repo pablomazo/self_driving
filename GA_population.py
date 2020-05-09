@@ -1,5 +1,5 @@
 import numpy as np
-from NeuralNetwork import NeuralNetwork
+from NeuralNetworks import FF1H
 
 class GA_population():
     def __init__(self, pop_size, nparents, npermanent, nI, nH, nO):
@@ -27,7 +27,7 @@ class GA_population():
 
         # Generate population.
         for individual in range(self.pop_size):
-            net = NeuralNetwork(self.nI, self.nH, self.nO)
+            net = FF1H(self.nH)
             self.random_initialize(net)
             self.population.append(net)
 
@@ -136,7 +136,7 @@ class GA_population():
             w_output = self.mutate_weights(w_output)
             b_output = self.mutate_bias(b_output)
 
-            net = NeuralNetwork(self.nI, self.nH, self.nO)
+            net = FF1H(self.nH)
             net.w_input = w_input
             net.b_input = b_input
             net.w_output = w_output
