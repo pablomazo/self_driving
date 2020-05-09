@@ -2,6 +2,7 @@ import pygame
 from abc import ABC, abstractmethod
 import numpy as np
 from Car import Car
+from NeuralNetworks import FF2H_relu
 import random
 import torch
 
@@ -90,9 +91,11 @@ class HeuristicPlayer(Player):
         return keys[key_id]
 
 class GeneticPlayer(Player):
-    def __init__(self, network):
+    def __init__(self, network, GUI=True):
         super().__init__()
-        self.set_image('./images/car4.png')
+
+        if GUI:
+            self.set_image('./images/car4.png')
 
         self.state = []
 
@@ -115,18 +118,20 @@ class GeneticPlayer(Player):
         torch.save(tosave, filename)
 
 class DQNPlayer(Player):
-    def __init__(self, H1, train=False, device='cpu', model='best_model.pth'):
+    def __init__(self, H1, train=False, device='cpu', model='best_model.pth', GUI=True):
         super().__init__()
-        self.set_image('./images/car4.png')
+
+        if GUI:
+            self.set_image('./images/car5.png')
 
         self.state = []
 
-        self.policy = DQN(H1).to(device)
+        self.policy = FF2H_relu(H1, H1).to(device)
         self.train = train
         self.device = device
 
         if self.train:
-            self.target = DQN(H1).to(device)
+            self.target = FF2H_relu(H1, H1).to(device)
             self.target.load_state_dict(self.policy.state_dict())
             self.target.eval()
 
