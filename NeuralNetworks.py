@@ -5,8 +5,9 @@ import torch.nn.functional as F
 
 class FF1H(nn.Module):
 
-    def __init__(self, h1):
+    def __init__(self, h):
         super(FF1H, self).__init__()
+        h1 = h[0]
         self.structure = [h1]
         self.linear1 = nn.Linear(4, h1)
         self.linear2 = nn.Linear(h1, 4)
@@ -18,8 +19,9 @@ class FF1H(nn.Module):
 
 class FF2H_relu(nn.Module):
 
-    def __init__(self, h1, h2):
+    def __init__(self, h):
         super(FF2H_relu, self).__init__()
+        h1, h2 = h[0], h[1]
         self.structure = [h1,h2]
         self.linear1 = nn.Linear(4, h1)
         self.linear2 = nn.Linear(h1, h2)
@@ -34,8 +36,9 @@ class FF2H_relu(nn.Module):
 
 class FF2H_sigmoid(nn.Module):
 
-    def __init__(self, h1, h2):
+    def __init__(self, h):
         super(FF2H_sigmoid, self).__init__()
+        h1, h2 = h[0], h[1]
         self.structure = [h1,h2]
         self.linear1 = nn.Linear(4, h1)
         self.linear2 = nn.Linear(h1, h2)

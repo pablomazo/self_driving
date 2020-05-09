@@ -2,9 +2,10 @@ import pygame
 from abc import ABC, abstractmethod
 import numpy as np
 from Car import Car
-from NeuralNetworks import FF2H_relu
+from NeuralNetworks import *
 import random
 import torch
+import importlib
 
 class Player(ABC):
     def __init__(self):
@@ -166,6 +167,62 @@ class DQNPlayer(Player):
 
     def save_network(self, filename='DQN_network.pth'):
         tosave = {}
+        tosave['structure'] = self.network.structure
+        tosave['state_dict'] = self.network.state_dict()
+        torch.save(tosave, filename)
+
+
+class SupervisedPlayer(Player):
+
+    def __init__(self, network_class='FF2H_sigmoid',
+                       structure = [300, 300],
+                       device = 'cpu',
+                       GUI=True,
+                       model_file=None):
+
+        super().__init__()
+
+        self.device = device
+        self.state = []
+        self.network_class = network_class
+
+        if GUI:
+            self.set_image('./images/car4.png')
+
+        if model_file is not None:
+            model_info = torch.load(model_file)
+            structure = model_info['structure']
+            self.network_class = model_info['model_class']
+
+        model_class = getattr(importlib.import_module("NeuralNetworks"), self.network_class) 
+
+        self.network = model_class(structure)
+
+
+    def get_key(self):
+        keys = ['R', 'U', 'L', None]
+
+        new_state = np.append(self.state,self.car.vel)
+        key_id, _ = self.select_action(new_state)
+
+        return keys[key_id]
+
+    def key_from_action(self, action):
+        keys = ['R', 'U', 'L', None]
+
+        return keys[action]
+
+    def select_action(self, state, n_actions=None, eps_threshold=0e0):
+
+        with torch.no_grad():
+            state = torch.tensor([state], device=self.device, dtype=torch.float)
+            action = self.network(state).max(1)[1].view(1,1)
+            Q = self.network(state).max(1)[0]
+            return action, Q
+
+    def save_network(self, filename='supervised_network.pth'):
+        tosave = {}
+        tosave['model_class'] = self.network.__class__.__name__
         tosave['structure'] = self.network.structure
         tosave['state_dict'] = self.network.state_dict()
         torch.save(tosave, filename)
