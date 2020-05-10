@@ -4,20 +4,24 @@ from NeuralNetworks import FF2H_sigmoid, FF2H_relu
 import torch
 
 
-batch_size = 10000
+batch_size = 6000
 p = 4
 
 def get_training_set():
 
-    input_batch = torch.rand((batch_size, p))
-    output_batch = torch.rand((batch_size, p))
+    data = np.loadtxt('input_supervised')
+    input_batch = data[: batch_size, :]
+    input_batch = torch.tensor(input_batch, dtype=torch.float)
+
+#    input_batch = torch.rand((batch_size, p))
+    output_batch = torch.zeros((batch_size, p), dtype=torch.float)
     
     for i in range(batch_size):
-        input_batch[i][0] *= 200
-        input_batch[i][1] *= 200
-        input_batch[i][2] *= 200
-        input_batch[i][3] *= 5.1 * np.random.randint(2)
-        output_batch[i][input_batch[i,0:3].max(0)[1]] = 1
+#        input_batch[i][0] *= 200
+#        input_batch[i][1] *= 200
+#        input_batch[i][2] *= 200
+#        input_batch[i][3] *= 5.1 * np.random.randint(2)
+        output_batch[i][input_batch[i,0:4].max(0)[1]] = 1e0
 
     return input_batch, output_batch
     
@@ -41,12 +45,12 @@ loss = torch.nn.MSELoss()
 
 input_batch, output_batch = get_training_set()
 
-rango = 1000
+rango = 500
 prev_der = None
 for i in range(rango):
     l2_cost = train(net, input_batch, output_batch, optimizer, loss)
 
-    if i % 100== 0:
+    if i % 10== 0:
         print(l2_cost, "iteración ",i)
 
 

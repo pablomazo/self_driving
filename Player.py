@@ -198,6 +198,8 @@ class SupervisedPlayer(Player):
 
         self.network = model_class(structure)
 
+        if model_file is not None:
+            self.network.load_state_dict(model_info["state_dict"])
 
     def get_key(self):
         keys = ['R', 'U', 'L', None]
