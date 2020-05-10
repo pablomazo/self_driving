@@ -2,7 +2,7 @@ from GA_population import GA_population
 import pygame
 import numpy as np
 from Controller import Controller
-from Player import * 
+from Player import *
 from NeuralNetworks import FF1H, FF2H_relu, FF2H_sigmoid
 import torch
 import sys

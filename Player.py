@@ -194,7 +194,10 @@ class SupervisedPlayer(Player):
             structure = model_info['structure']
             self.network_class = model_info['model_class']
 
-        model_class = getattr(importlib.import_module("NeuralNetworks"), self.network_class) 
+            print('network class:', self.network_class)
+            print('Structure:', structure)
+
+        model_class = getattr(importlib.import_module("NeuralNetworks"), self.network_class)
 
         self.network = model_class(structure)
 
@@ -205,7 +208,12 @@ class SupervisedPlayer(Player):
         keys = ['R', 'U', 'L', None]
 
         new_state = np.append(self.state,self.car.vel)
+        print('state:', new_state)
+        expec = np.argmax(self.state)
         key_id, _ = self.select_action(new_state)
+        print('Expected key: {}, Pressed key: {}'.format(expec, key_id.item()))
+        print('-------------------------------')
+        print()
 
         return keys[key_id]
 
@@ -218,7 +226,9 @@ class SupervisedPlayer(Player):
 
         with torch.no_grad():
             state = torch.tensor([state], device=self.device, dtype=torch.float)
-            action = self.network(state).max(1)[1].view(1,1)
+            sal = self.network(state)
+            print('net sal:', sal)
+            action = sal.max(1)[1].view(1,1)
             Q = self.network(state).max(1)[0]
             return action, Q
 
