@@ -119,7 +119,11 @@ class GeneticPlayer(Player):
         torch.save(tosave, filename)
 
 class DQNPlayer(Player):
-    def __init__(self, H1, train=False, device='cpu', model='best_model.pth', GUI=True):
+    def __init__(self, structure=[5],
+                       train=False,
+                       device='cpu',
+                       model='best_model.pth',
+                       GUI=True):
         super().__init__()
 
         if GUI:
@@ -127,12 +131,12 @@ class DQNPlayer(Player):
 
         self.state = []
 
-        self.policy = FF2H_relu(H1, H1).to(device)
+        self.policy = FF1H(structure).to(device)
         self.train = train
         self.device = device
 
         if self.train:
-            self.target = FF2H_relu(H1, H1).to(device)
+            self.target = FF1H(structure).to(device)
             self.target.load_state_dict(self.policy.state_dict())
             self.target.eval()
 

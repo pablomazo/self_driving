@@ -96,7 +96,6 @@ def optimize(agent, optimizer, memory, BATCH_SIZE, GAMMA):
     loss = F.mse_loss(Q_policy, y)
 
     # Optimize policy:
-    # Optimize the model
     optimizer.zero_grad()
     loss.backward()
     for param in agent.policy.parameters():
@@ -106,7 +105,7 @@ def optimize(agent, optimizer, memory, BATCH_SIZE, GAMMA):
     return loss.data.item()
 
 def preprocess_state(state):
-    alpha = 1e-1
+    alpha = 2e-1
     state = 1e0 - np.exp(-alpha * state)
     return state
 
@@ -133,12 +132,13 @@ EPS_END = 0.05
 EPS_DECAY = 200
 
 # Net hyperparameters
-H, actions = 300, 4
+structure = [5]
+actions = 4
 
 # Train parameters:
 max_episodes = 5000
 GAMMA = 0.99
-RESET_EPISODES = 15
+RESET_EPISODES = 25
 lr = 1e-4
 
 # Instanciate Controller:
@@ -149,7 +149,11 @@ controller.load_circuit()
 memory = ReplayMemory(CAPACITY)
 
 # Initialize agent:
-player = DQNPlayer(H, train=True, device=device, GUI=False)
+player = DQNPlayer(structure = structure,
+                   train=True,
+                   device=device,
+                   GUI=False)
+
 controller.register_player(player)
 player = controller.players[0]
 
@@ -193,9 +197,7 @@ for episode in range(max_episodes):
             reward = -1
 
         # Check if game finished:
-        end = player.count >= 500 or player.laps >= 10 or player.crashed
-
-        done = end
+        done = player.count >= 500 or player.laps >= 10 or player.crashed
 
         # Store transition only if reward is not zero:
         reward_1 = player.car.block
@@ -212,7 +214,8 @@ for episode in range(max_episodes):
 
         if done:
             reward_list.append(total_reward)
-            #plot_durations()
+            print(episode, total_reward.cpu().item())
+            plot_durations()
             break
         ##print('Next:', next_state)
         ##print('Reward:', reward)
