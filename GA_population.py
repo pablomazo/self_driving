@@ -26,7 +26,7 @@ class GA_population():
 
         # Generate population.
         for individual in range(self.pop_size):
-            net = FF1H(self.nH)
+            net = FF1H([self.nH])
             net = net.eval()
             self.population.append(net)
 
@@ -100,7 +100,7 @@ class GA_population():
             parent1 = np.random.randint(nparents)
             parent2 = np.random.randint(nparents)
 
-            net = FF1H(self.nH)
+            net = FF1H([self.nH])
             for param in net.state_dict().keys():
                 if 'weight' in param:
                     weight1 = parents[parent1].state_dict()[param].numpy()
