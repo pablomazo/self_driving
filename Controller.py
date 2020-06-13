@@ -31,10 +31,10 @@ class Controller():
             player.car.reset(self.initial_pos)
             player.car.angle = self.orientation
 
-    def register_genetic(self,genetic):
+    def register_genetic(self,genetic, GUI=True):
         self.genetic = genetic
         for i in range(self.genetic.pop_size):
-            player = GeneticPlayer(self.genetic.population[i])
+            player = GeneticPlayer(self.genetic.population[i], GUI=GUI)
             self.register_player(player)
 
     def register_player(self, player):
