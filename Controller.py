@@ -90,7 +90,7 @@ class Controller():
     def is_out(self,x,y,block):
         out = False
         x0, x1, y0, y1 = self.circuit.get_block_coor(block)
-        if x1 <= x or x <= x0 or y1 <= y or y <= y0:
+        if x1 < x or x < x0 or y1 < y or y < y0:
             out = True
         return out
 
