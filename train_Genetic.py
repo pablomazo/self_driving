@@ -23,15 +23,16 @@ genetic = GA_population(population,n_father, npermanent,nH)
 
 #Instanciate Controller
 controller = Controller()
-controller.load_circuit()
+controller.load_circuit(1)
 controller.register_genetic(genetic)
 
-n_change = 100
+n_change = 20
+best_fitness = 0
 for generation in range(100000):
     try:
         print('Generation:', generation)
-        if generation % n_change == 0:
-            controller.load_circuit()
+        #if generation % n_change == 0:
+        #    controller.load_circuit()
         controller.reset()
         done = False
 
@@ -82,9 +83,6 @@ for generation in range(100000):
         if fitness[best] > best_fitness:
             controller.players[best].save_network(filename='genetic_{}.pth'.format(generation))
             best_fitness = fitness[best]
-
-        # Save ckeckpoint of best individual.
-        controller.players[best].save_network(filename='best_genetic.pth')
 
         # Update parameters of each individual:
         genetic.get_new_generation(fitness)
