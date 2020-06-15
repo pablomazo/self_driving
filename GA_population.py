@@ -144,7 +144,7 @@ class GA_population():
             new_weights[rand_row,:] = secondary_parent[rand_row,:]
 
         # Permute a random number of columns:
-        n_row_permutation = np.random.randint(1)
+        n_col_permutation = np.random.randint(1)
 
         for icol in range(n_col_permutation):
             rand_col = np.random.randint(columns)

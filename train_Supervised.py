@@ -1,5 +1,5 @@
 import numpy as np
-from Player import SupervisedPlayer
+from Player import NeuralPlayer
 from NeuralNetworks import *
 import torch
 
@@ -39,7 +39,7 @@ def train(neural_net, X, Y, optimizer, loss_fun):
 
 lr = 1e-3
 structure = [5]
-player = SupervisedPlayer(network_class='FF1H',
+player = NeuralPlayer(network_class='FF1H',
                           structure=[5],
                           GUI=False)
 

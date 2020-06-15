@@ -1,7 +1,8 @@
-from GA_population import GA_population
-import pygame
-import numpy as np
 from Controller import Controller
+from GA_population import GA_population
+from NeuralNetworks import save_model
+import numpy as np
+import pygame
 import sys
 import torch
 
@@ -23,7 +24,7 @@ genetic = GA_population(population,n_father, npermanent,nH)
 
 #Instanciate Controller
 controller = Controller()
-controller.load_circuit(1)
+controller.load_circuit()
 controller.register_genetic(genetic)
 
 n_change = 20
@@ -75,13 +76,13 @@ for generation in range(100000):
 
         # Get number of blocks each car moved to act as fitness function:
         fitness = [controller.players[i].car.block + controller.players[i].laps * controller.circuit.nblocks for i in range(genetic.pop_size)]
-        print(fitness)
+        print('Fitness:', fitness)
 
         # Get id of best individual:
         best = np.argmax(fitness)
 
         if fitness[best] > best_fitness:
-            controller.players[best].save_network(filename='genetic_{}.pth'.format(generation))
+            save_model(controller.players[best].network, 'genetic_{}.pth'.format(generation))
             best_fitness = fitness[best]
 
         # Update parameters of each individual:
@@ -98,7 +99,7 @@ for generation in range(100000):
         best = np.argmax(fitness)
 
         # Save ckeckpoint of best individual.
-        controller.players[best].save_network(filename='best_genetic.pth')
-        print('Best player before exit saved in best_genetic.pth with fitness:', fitness[best])
+        save_model(controller.players[best].network, 'checkpoint_genetic.pth')
+        print('Best player before exit saved in checkpoint_genetic.pth with fitness:', fitness[best])
 
         sys.exit()
