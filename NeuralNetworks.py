@@ -51,6 +51,16 @@ class FF2H_sigmoid(nn.Module):
         return x
 
 
+def save_model(model, file_name):
+    '''
+    Save a model to a file.
+    '''
+    model_dict = {}
+    model_dict['structure'] = model.structure
+    model_dict['model_class'] = model.__class__.__name__
+    model_dict['state_dict'] = model.state_dict()
+
+    torch.save(model_dict, file_name)
 
 class NeuralNetwork():
     def __init__(self, n_inputs, n_hidden, n_outputs):
