@@ -59,7 +59,7 @@ while not done:
     if i % 100== 0:
         print(i, l2_cost, loss_var)
 
-    done = loss_var < 1e-5
+    done = loss_var < 1e-2
     l2_prev = l2_cost
     i += 1
 
@@ -72,4 +72,4 @@ for i in range(10):
     print("-----------------------------------------------------------------------------")
 
 
-save_model(player.network, 'final_supervised.pth')
+save_model(player.network, 'saved_models/final_supervised.pth')
