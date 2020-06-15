@@ -244,12 +244,8 @@ class SupervisedPlayer(Player):
         keys = ['R', 'U', 'L', None]
 
         new_state = np.append(self.state,self.car.vel)
-        print('state:', new_state)
         expec = np.argmax(self.state)
         key_id, _ = self.select_action(new_state)
-        print('Expected key: {}, Pressed key: {}'.format(expec, key_id.item()))
-        print('-------------------------------')
-        print()
 
         return keys[key_id]
 
