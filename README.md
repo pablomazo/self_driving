@@ -73,7 +73,8 @@ Training DQN:
 
 	It will show a graph with the total reward in each generation
 
-	When the training is finished it will save the resulting network in the path: 
+	When the training is finished it will save the neural network of the best performance in the path: 
 
 	saved_models/final_DQN.pth 
 	
+	If you want to see the agent execute train_DQN.py file: python train_DQN.py
