@@ -56,6 +56,7 @@ class Controller():
         '''
         Creates and adds a list of genetic players 
         the number of players is given by the population
+        This method is used for training GeneticPlayer
         '''
 
         self.genetic = genetic
