@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 
 from Controller import Controller
 from Player import DQNPlayer
+from NeuralNetworks import save_model
 
 def plot_durations():
     plt.figure(2)
@@ -132,7 +133,7 @@ EPS_END = 0.05
 EPS_DECAY = 200
 
 # Net hyperparameters
-structure = [5]
+structure = [100, 100]
 actions = 4
 
 # Train parameters:
@@ -222,14 +223,13 @@ for episode in range(max_episodes):
         ##print('end:', board.end)
         ##print()
 
+    # Save checkpoint.
     if total_reward > best_reward:
-        #print("Checkpoint saved 'best_model.pth'. Best reward: {}".format(total_reward))
-        torch.save(player.policy.state_dict(), 'best_model.pth')
+        save_model(player.policy, 'checkpoint_DQN.pth')
         best_reward = total_reward
 
-    #print(episode, total_reward, np.mean(av_Q_val), eps)
     if episode % RESET_EPISODES == 0:
         player.target.load_state_dict(player.policy.state_dict())
 
 # Save model:
-torch.save(player.policy.state_dict(), 'final_model.pth')
+save_model(player.policy, 'final_DQN.pth')
