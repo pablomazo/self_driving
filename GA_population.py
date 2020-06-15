@@ -137,7 +137,6 @@ class GA_population():
             secondary_parent = weights1
 
         # Permute a random number of rows:
-        n_row_permutation = np.random.randint(rows)
         n_row_permutation = np.random.randint(1)
 
         for irow in range(n_row_permutation):
@@ -145,7 +144,6 @@ class GA_population():
             new_weights[rand_row,:] = secondary_parent[rand_row,:]
 
         # Permute a random number of columns:
-        n_col_permutation = np.random.randint(columns)
         n_row_permutation = np.random.randint(1)
 
         for icol in range(n_col_permutation):
@@ -161,7 +159,6 @@ class GA_population():
         new_bias = np.empty_like(bias1)
         new_bias[:mean] = bias1[:mean]
         new_bias[mean:] = bias2[mean:]
-        #new_bias = bias1
 
         return new_bias
 
@@ -173,7 +170,6 @@ class GA_population():
 
         rows, columns = weights.shape
 
-        nmutations = np.random.randint(rows * columns)
         nmutations = np.random.randint(5)
 
         for mutation in range(nmutations):
@@ -191,7 +187,6 @@ class GA_population():
 
         elems = bias.shape[0]
 
-        nmutations = np.random.randint(elems)
         nmutations = np.random.randint(5)
 
         for mutation in range(nmutations):
