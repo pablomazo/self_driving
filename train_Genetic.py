@@ -23,7 +23,7 @@ genetic = GA_population(population,n_father, npermanent,nH)
 
 #Instanciate Controller
 controller = Controller()
-controller.load_circuit(1)
+controller.load_circuit()
 controller.register_genetic(genetic)
 
 n_change = 20
