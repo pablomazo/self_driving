@@ -93,7 +93,7 @@ class HeuristicPlayer(Player):
         return keys[key_id]
 
 class GeneticPlayer(Player):
-    def __init__(self, network, GUI=True):
+    def __init__(self, network, GUI=True, color='red'):
         super().__init__()
 
         if GUI:
