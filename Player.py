@@ -155,8 +155,9 @@ class DQNPlayer(Player):
             structure = model_dict['structure']
             self.network_class = model_dict['model_class']
 
-            print('network class:', self.network_class)
-            print('Structure:', structure)
+            print('Using model file: {}'.format(model_file))
+            print('network class: {}'.format(self.network_class))
+            print('Structure: {}'.format(structure))
 
         model_class = getattr(importlib.import_module("NeuralNetworks"), self.network_class)
 
@@ -164,7 +165,7 @@ class DQNPlayer(Player):
 
         # If a model file is given, load parameters into net.
         if model_file is not None:
-            self.policy.load_state_dict(model_info["state_dict"])
+            self.policy.load_state_dict(model_dict["state_dict"])
 
         # A target net is inialized with the same parameters as policy.
         if self.train:
