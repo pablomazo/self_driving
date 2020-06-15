@@ -2,8 +2,9 @@ import numpy as np
 class Circuit():
     def __init__(self, circuit_id = None):
         '''
+        Circuits are made out of concateanted squares "blocks"
         circuit_list tells how the circuit is built.
-        The first box will have a fixed position. Then the indexes
+        The first block will have a fixed position. Then the indexes
         of the list will tell to which side the next box is join.
 
                  4
@@ -12,12 +13,15 @@ class Circuit():
        y0      ----
                  2
               x0   x1
+
+        if circuit_id is given it creates specific circuit
+        if no circuit_id is given it chooses random circuit from the list
         '''
 
         #circuits =[ [1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,4,4], [1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1],[1, 4, 4, 4, 4, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2],[2, 3, 3, 4, 4, 4, 4, 3, 3, 3, 3, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 3, 3, 4, 4, 1, 1, 1, 1, 1, 1, 4, 4, 1, 1, 4, 4, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2],[3, 2, 2, 3, 3, 4, 4, 4, 4, 1, 1, 1, 1, 4, 4, 1, 1, 2, 2, 3, 3, 4, 4, 1, 1, 2, 2, 2, 2, 3, 3, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 3, 3, 4, 4, 3, 3]]
         circuits =[ [1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1],[1, 4, 4, 4, 4, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 4, 4, 1, 1, 4, 4, 4, 4, 4, 4, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2],[2, 3, 3, 4, 4, 4, 4, 3, 3, 3, 3, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 3, 3, 4, 4, 1, 1, 1, 1, 1, 1, 4, 4, 1, 1, 4, 4, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2],[3, 2, 2, 3, 3, 4, 4, 4, 4, 1, 1, 1, 1, 4, 4, 1, 1, 2, 2, 3, 3, 4, 4, 1, 1, 2, 2, 2, 2, 3, 3, 2, 2, 1, 1, 2, 2, 1, 1, 4, 4, 3, 3, 4, 4, 3, 3]]
 
-        # Height and width of each box.
+        # Height and width of each block.
         self.height, self.width = 60e0, 60e0
 
         # List to build the circuit.
@@ -42,7 +46,7 @@ class Circuit():
     def build_circuit(self):
         '''
         Will generate a list of x0, x1, y0, y1 positions for each
-        box
+        block
         '''
         self.circuit = [[0e0, self.width, 0e0, self.height]]
 
