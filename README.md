@@ -1,7 +1,4 @@
 # GeneticCars
-This is the code of the video:
-
-	-
 
 The code is made in python and uses the libraries:
 
