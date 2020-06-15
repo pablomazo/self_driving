@@ -14,7 +14,8 @@ class Player(ABC):
         self.crashed = False
         self.car = Car()
 
-    def set_image(self, image_name):
+    def set_image(self, color):
+        image_name = './images/{}.png'.format(color)
         self.GUI_car_orig = pygame.image.load(image_name).convert_alpha()
         self.GUI_car_orig = pygame.transform.scale(self.GUI_car_orig, (14, 24))
         self.GUI_car_orig = pygame.transform.rotate(self.GUI_car_orig, -90)
@@ -46,9 +47,9 @@ class Player(ABC):
         self.laps = 0
 
 class HumanPlayer1(Player):
-    def __init__(self):
+    def __init__(self, color='black'):
         super().__init__()
-        self.set_image('./images/car.png')
+        self.set_image(color)
 
     def get_key(self):
         key = pygame.key.get_pressed()
@@ -63,9 +64,9 @@ class HumanPlayer1(Player):
             return 'U'
 
 class HumanPlayer2(Player):
-    def __init__(self):
+    def __init__(self, color='green'):
         super().__init__()
-        self.set_image('./images/car2.png')
+        self.set_image(color)
 
     def get_key(self):
         key = pygame.key.get_pressed()
@@ -79,9 +80,9 @@ class HumanPlayer2(Player):
             return 'U'
 
 class HeuristicPlayer(Player):
-    def __init__(self):
+    def __init__(self, color='yellow'):
         super().__init__()
-        self.set_image('./images/car3.png')
+        self.set_image(color)
 
     def get_key(self):
         keys = ['R', 'U', 'L']
@@ -96,7 +97,7 @@ class GeneticPlayer(Player):
         super().__init__()
 
         if GUI:
-            self.set_image('./images/car4.png')
+            self.set_image(color)
 
         self.state = []
 
@@ -112,12 +113,6 @@ class GeneticPlayer(Player):
 
         return keys[key_id]
 
-    def save_network(self, filename='genetic_network.pth'):
-        tosave = {}
-        tosave['structure'] = self.network.structure
-        tosave['state_dict'] = self.network.state_dict()
-        torch.save(tosave, filename)
-
 class DQNPlayer(Player):
     '''
     Class for DQN player.
@@ -131,6 +126,7 @@ class DQNPlayer(Player):
         If a model_file is specified, the network_class and structure
         will be those defined in the model file.
         - train: If True, a target net is initialized.
+        - color: Color the car will have.
 
     '''
     def __init__(self, network_class='FF2H_sigmoid',
@@ -138,7 +134,8 @@ class DQNPlayer(Player):
                        device='cpu',
                        GUI=True,
                        model_file=None,
-                       train=False):
+                       train=False,
+                       color='blue'):
         super().__init__()
 
         self.device = device
@@ -147,7 +144,7 @@ class DQNPlayer(Player):
         self.train = train
 
         if GUI:
-            self.set_image('./images/car.png')
+            self.set_image(color)
 
         # If model file is given, read structure and NN class.
         if model_file is not None:
@@ -207,13 +204,28 @@ class DQNPlayer(Player):
         torch.save(tosave, filename)
 
 
-class SupervisedPlayer(Player):
+class NeuralPlayer(Player):
+    '''
+    Class for Supervised  and Genetic player.
+
+    Arguments:
+        - network_class: Name of the NN class to be used.
+        - structure: List defining the structure of the NN.
+        - device: 'cpu' or 'cuda' to evaluate the model in CPU or GPU.
+        - GUI: True of False to load image of the car to be used on a GUI.
+        - model_file: Path to a model file to be loaded on nets.
+        If a model_file is specified, the network_class and structure
+        will be those defined in the model file.
+        - color: Color the car will have.
+
+    '''
 
     def __init__(self, network_class='FF1H',
                        structure = [5],
                        device = 'cpu',
                        GUI=True,
-                       model_file=None):
+                       model_file=None,
+                       color='grey'):
 
         super().__init__()
 
@@ -222,7 +234,7 @@ class SupervisedPlayer(Player):
         self.network_class = network_class
 
         if GUI:
-            self.set_image('./images/car2.png')
+            self.set_image(color)
 
         if model_file is not None:
             model_info = torch.load(model_file)
@@ -254,21 +266,11 @@ class SupervisedPlayer(Player):
 
         return keys[action]
 
-    def select_action(self, state, n_actions=None, eps_threshold=0e0):
+    def select_action(self, state):
 
         with torch.no_grad():
             state = torch.tensor([state], device=self.device, dtype=torch.float)
             sal = self.network(state)
-            print('net sal:', sal)
             action = sal.max(1)[1].view(1,1)
             Q = self.network(state).max(1)[0]
             return action, Q
-
-    def save_network(self, filename='supervised_network.pth'):
-        tosave = {}
-        tosave['model_class'] = self.network.__class__.__name__
-        tosave['structure'] = self.network.structure
-        tosave['state_dict'] = self.network.state_dict()
-        torch.save(tosave, filename)
-
-
