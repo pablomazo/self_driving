@@ -119,29 +119,59 @@ class GeneticPlayer(Player):
         torch.save(tosave, filename)
 
 class DQNPlayer(Player):
-    def __init__(self, structure=[5],
-                       train=False,
+    '''
+    Class for DQN player.
+
+    Arguments:
+        - network_class: Name of the NN class to be used.
+        - structure: List defining the structure of the NN.
+        - device: 'cpu' or 'cuda' to evaluate the model in CPU or GPU.
+        - GUI: True of False to load image of the car to be used on a GUI.
+        - model_file: Path to a model file to be loaded on nets.
+        If a model_file is specified, the network_class and structure
+        will be those defined in the model file.
+        - train: If True, a target net is initialized.
+
+    '''
+    def __init__(self, network_class='FF2H_sigmoid',
+                       structure=[5],
                        device='cpu',
-                       model='best_model.pth',
-                       GUI=True):
+                       GUI=True,
+                       model_file=None,
+                       train=False):
         super().__init__()
 
-        if GUI:
-            self.set_image('./images/car5.png')
-
-        self.state = []
-
-        self.policy = FF1H(structure).to(device)
-        self.train = train
         self.device = device
+        self.state = []
+        self.network_class = network_class
+        self.train = train
 
+        if GUI:
+            self.set_image('./images/car.png')
+
+        # If model file is given, read structure and NN class.
+        if model_file is not None:
+            model_dict = torch.load(model_file)
+            structure = model_dict['structure']
+            self.network_class = model_dict['model_class']
+
+            print('network class:', self.network_class)
+            print('Structure:', structure)
+
+        model_class = getattr(importlib.import_module("NeuralNetworks"), self.network_class)
+
+        self.policy = model_class(structure).to(device)
+
+        # If a model file is given, load parameters into net.
+        if model_file is not None:
+            self.policy.load_state_dict(model_info["state_dict"])
+
+        # A target net is inialized with the same parameters as policy.
         if self.train:
-            self.target = FF1H(structure).to(device)
+            self.target = model_class(structure).to(device)
             self.target.load_state_dict(self.policy.state_dict())
             self.target.eval()
-
         else:
-            self.policy.load_state_dict(torch.load(model, map_location='cpu'))
             self.policy.eval()
 
     def get_key(self):
