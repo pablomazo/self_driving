@@ -1,17 +1,19 @@
-import torch
-import torch.optim as optim
-import torch.nn.functional as F
-import numpy as np
-import random
+from Controller import Controller
+from NeuralNetworks import save_model
+from Player import DQNPlayer
 from collections import namedtuple
 import matplotlib
 import matplotlib.pyplot as plt
-
-from Controller import Controller
-from Player import DQNPlayer
-from NeuralNetworks import save_model
+import numpy as np
+import random
+import torch
+import torch.nn.functional as F
+import torch.optim as optim
 
 def plot_durations():
+    '''
+    Function to plot the total reward during training process.
+    '''
     plt.figure(2)
     plt.clf()
     durations_t = torch.tensor(reward_list, dtype=torch.float)
@@ -31,6 +33,10 @@ def plot_durations():
         display.display(plt.gcf())
 
 class ReplayMemory():
+    '''
+    ReplayMemory class. Here the agent will save its observations, actions
+    and rewards to be used in the training process.
+    '''
     def __init__(self, capacity):
         self.capacity = capacity
         self.memory = []
@@ -55,6 +61,10 @@ def greedy_policy(episode, EPS_START, EPS_END, EPS_DECAY):
     return eps_threshold
 
 def optimize(agent, optimizer, memory, BATCH_SIZE, GAMMA):
+    '''
+    Training process. The agent uses its replaymemory to train itself
+    on the observations.
+    '''
     if len(memory) < BATCH_SIZE:
         return
 
@@ -106,8 +116,9 @@ def optimize(agent, optimizer, memory, BATCH_SIZE, GAMMA):
     return loss.data.item()
 
 def preprocess_state(state):
-    alpha = 2e-1
-    state = 1e0 - np.exp(-alpha * state)
+    '''
+    Function to add any kind of preprocessing.
+    '''
     return state
 
 #-------------------------------------------------------------
@@ -133,6 +144,7 @@ EPS_END = 0.05
 EPS_DECAY = 200
 
 # Net hyperparameters
+network_class = 'FF2H_sigmoid'
 structure = [100, 100]
 actions = 4
 
@@ -144,13 +156,14 @@ lr = 1e-4
 
 # Instanciate Controller:
 controller = Controller()
-controller.load_circuit()
+controller.load_circuit(1)
 
 # Initialize replay memory
 memory = ReplayMemory(CAPACITY)
 
 # Initialize agent:
-player = DQNPlayer(structure = structure,
+player = DQNPlayer(network_class=network_class,
+                   structure = structure,
                    train=True,
                    device=device,
                    GUI=False)
@@ -167,7 +180,7 @@ for episode in range(max_episodes):
     controller.reset()
     total_reward = 0
     av_Q_val = 0
-    reward_1 = 0
+    prev_block = 0
     done = False
     while not done:
         state = np.array(controller.get_state(player))
@@ -187,21 +200,17 @@ for episode in range(max_episodes):
             next_state = np.array(controller.get_state(player))
             next_state = preprocess_state(next_state)
 
-            reward = 1 * player.car.vel
-            #if player.car.block != reward_1:
-            #    reward = 1
-            #else:
-            #    reward = 0
+            # If the agent changes its block gets a point.
+            reward = (player.car.block - prev_block) / (player.count + 1.)
 
         else:
             next_state = state.copy()
             reward = -1
 
         # Check if game finished:
-        done = player.count >= 500 or player.laps >= 10 or player.crashed
+        done = player.count >= 1000 or player.laps >= 10 or player.crashed
 
-        # Store transition only if reward is not zero:
-        reward_1 = player.car.block
+        prev_block = player.car.block
         next_state = torch.tensor([next_state], device=device, dtype=torch.float)
         reward = torch.tensor([reward], device=device, dtype=torch.float)
         state = torch.tensor([state], device=device, dtype=torch.float)
@@ -218,18 +227,14 @@ for episode in range(max_episodes):
             print(episode, total_reward.cpu().item())
             plot_durations()
             break
-        ##print('Next:', next_state)
-        ##print('Reward:', reward)
-        ##print('end:', board.end)
-        ##print()
 
     # Save checkpoint.
     if total_reward > best_reward:
-        save_model(player.policy, 'checkpoint_DQN.pth')
+        save_model(player.policy, './saved_models/checkpoint_DQN.pth')
         best_reward = total_reward
 
     if episode % RESET_EPISODES == 0:
         player.target.load_state_dict(player.policy.state_dict())
 
 # Save model:
-save_model(player.policy, 'final_DQN.pth')
+save_model(player.policy, './saved_models/final_DQN.pth')

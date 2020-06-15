@@ -82,7 +82,7 @@ for generation in range(100000):
         best = np.argmax(fitness)
 
         if fitness[best] > best_fitness:
-            save_model(controller.players[best].network, 'genetic_{}.pth'.format(generation))
+            save_model(controller.players[best].network, './saved_models/genetic_{}.pth'.format(generation))
             best_fitness = fitness[best]
 
         # Update parameters of each individual:
@@ -99,7 +99,7 @@ for generation in range(100000):
         best = np.argmax(fitness)
 
         # Save ckeckpoint of best individual.
-        save_model(controller.players[best].network, 'checkpoint_genetic.pth')
+        save_model(controller.players[best].network, './saved_models/checkpoint_genetic.pth')
         print('Best player before exit saved in checkpoint_genetic.pth with fitness:', fitness[best])
 
         sys.exit()
