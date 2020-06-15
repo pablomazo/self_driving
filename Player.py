@@ -134,7 +134,7 @@ class DQNPlayer(Player):
 
     '''
     def __init__(self, network_class='FF2H_sigmoid',
-                       structure=[5],
+                       structure=[5,5],
                        device='cpu',
                        GUI=True,
                        model_file=None,
@@ -209,8 +209,8 @@ class DQNPlayer(Player):
 
 class SupervisedPlayer(Player):
 
-    def __init__(self, network_class='FF2H_sigmoid',
-                       structure = [300, 300],
+    def __init__(self, network_class='FF1H',
+                       structure = [5],
                        device = 'cpu',
                        GUI=True,
                        model_file=None):
@@ -222,19 +222,20 @@ class SupervisedPlayer(Player):
         self.network_class = network_class
 
         if GUI:
-            self.set_image('./images/car4.png')
+            self.set_image('./images/car2.png')
 
         if model_file is not None:
             model_info = torch.load(model_file)
             structure = model_info['structure']
             self.network_class = model_info['model_class']
 
-            print('network class:', self.network_class)
-            print('Structure:', structure)
+            print('Using model file: {}'.format(model_file))
+            print('network class: {}'.format(self.network_class))
+            print('Structure: {}'.format(structure))
 
         model_class = getattr(importlib.import_module("NeuralNetworks"), self.network_class)
 
-        self.network = model_class(structure)
+        self.network = model_class(structure).to(device)
 
         if model_file is not None:
             self.network.load_state_dict(model_info["state_dict"])

@@ -37,10 +37,13 @@ def train(neural_net, X, Y, optimizer, loss_fun):
     return loss.item()
 
 
-lr = 0.001
+lr = 1e-3
 structure = [5]
-net = FF1H(structure)
-optimizer = torch.optim.Adam(net.parameters(), lr=lr)
+player = SupervisedPlayer(network_class='FF1H',
+                          structure=[5],
+                          GUI=False)
+
+optimizer = torch.optim.Adam(player.network.parameters(), lr=lr)
 loss = torch.nn.MSELoss()
 
 input_batch, output_batch = get_training_set()
@@ -48,9 +51,8 @@ input_batch, output_batch = get_training_set()
 l2_prev = 1e10
 done = False
 i = 0
-#for i in range(rango):
 while not done:
-    l2_cost = train(net, input_batch, output_batch, optimizer, loss)
+    l2_cost = train(player.network, input_batch, output_batch, optimizer, loss)
 
     loss_var = np.abs(l2_cost - l2_prev) / l2_prev
 
@@ -66,13 +68,8 @@ for i in range(10):
     ind = np.random.randint(batch_size)
     print(input_batch[ind])
     print(output_batch[ind])
-    print(net(input_batch[ind].view(1, -1)))
+    print(player.network(input_batch[ind].view(1, -1)))
     print("-----------------------------------------------------------------------------")
 
 
-player = SupervisedPlayer(GUI=False,
-                          network_class=net.__class__.__name__,
-                          structure=structure)
-
-player.network.load_state_dict(net.state_dict())
-player.save_network(filename='supervised.pth')
+save_model(player.network, 'final_supervised.pth')
