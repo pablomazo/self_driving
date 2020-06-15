@@ -1,9 +1,8 @@
-from GA_population import GA_population
 import pygame
 import numpy as np
 from Controller import Controller
 from Player import *
-from NeuralNetworks import FF1H, FF2H_relu, FF2H_sigmoid
+from NeuralNetworks import *
 import torch
 import sys
 
@@ -18,26 +17,26 @@ screen = pygame.display.set_mode(screen_size)
 
 #Instanciate Controller
 controller = Controller()
-controller.load_circuit(4)
+controller.load_circuit(1)
 player = HumanPlayer1()
 player2 = HumanPlayer2()
 player3 = HeuristicPlayer()
 
-player4 = SupervisedPlayer(model_file="supervised.pth")
+# Supervised player.
+player4 = NeuralPlayer(model_file='./saved_models/final_supervised.pth')
 
-#net = FF2H_sigmoid(300, 300)
-#net.load_parameters_supervised('./supervised.pickle')
-#player4 = GeneticPlayer(net)
+# Genetic Player.
+player5 = NeuralPlayer(model_file='./saved_models/final_genetic.pth', color='red')
 
-#net = FF1H(5)
-#net.load_parameters('./saved_models/master2.pickle')
-#player5 = GeneticPlayer(net)
+# DQN player.
+player6 = DQNPlayer(model_file='./saved_models/final_DQN.pth')
 
 controller.register_player(player)
 controller.register_player(player2)
 controller.register_player(player3)
 controller.register_player(player4)
-#controller.register_player(player5)
+controller.register_player(player5)
+controller.register_player(player6)
 
 done = False
 
