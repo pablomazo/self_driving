@@ -18,12 +18,18 @@ screen = pygame.display.set_mode(screen_size)
 #Instanciate Controller
 controller = Controller()
 controller.load_circuit(1)
-player = HumanPlayer1()
-player2 = HumanPlayer2()
+
+#Human player with arrows control.
+player = HumanPlayer1() 
+
+#Human player with 'wasd' control.
+player2 = HumanPlayer2() 
+
+#Heuristic player.
 player3 = HeuristicPlayer()
 
 # Supervised player.
-player4 = NeuralPlayer(model_file='./saved_models/final_supervised.pth')
+player4 = NeuralPlayer(model_file='./saved_models/final_supervised.pth') 
 
 # Genetic Player.
 player5 = NeuralPlayer(model_file='./saved_models/best_genetic.pth', color='red')
