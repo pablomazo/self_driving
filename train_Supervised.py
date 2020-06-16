@@ -59,7 +59,7 @@ while not done:
     if i % 100== 0:
         print(i, l2_cost, loss_var)
 
-    done = loss_var < 1e-2
+    done = loss_var < 1e-5
     l2_prev = l2_cost
     i += 1
 

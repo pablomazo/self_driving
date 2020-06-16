@@ -29,7 +29,7 @@ player2 = HumanPlayer2()
 player3 = HeuristicPlayer()
 
 # Supervised player.
-player4 = NeuralPlayer(model_file='./saved_models/final_supervised.pth') 
+player4 = NeuralPlayer(model_file='./saved_models/best_supervised.pth') 
 
 # Genetic Player.
 player5 = NeuralPlayer(model_file='./saved_models/best_genetic.pth', color='red')
