@@ -1,80 +1,69 @@
 # GeneticCars
 
-The code is made in python and uses the libraries:
+Proyect to explore different training algorithms to make an agent complete 
+a circuit.
 
-	- pygame for the visual part of the videogame
-	- pytorch for the part of neural networks
+## Dependencies:
+- Pygame
+- PyTorch
+- NumPy
+- Matplotlib
 
+## Training:
+Three training methodologies are provided:
+1. Supervised learning:
+```
+python train_Supervised.py
+```
+During execution the epoch, error and relative error with respect to previous iteration
+are given.
 
-Here we explain how to use this code
+When train has finished the resulting model is saved to "saved_models/final_supervised.pth "
 
-Playing the game:
+2. Genetic algorithm:
 
-	Execute Play.py file: python Play.py
+There are two versions of this code with and withoud GUI: train_Genetic.py and train_Genetic_no_GUI.py 
+which are executed the same way:
+```
+python train_Genetic.py population parents permanent hidden_size
 
-	Inside Play.py you can select the number and type of players 
+python train_Genetic_no_GUI.py population parents permanent hidden_size
+```
+with
+* population: Number of individuals in each generation.
+* parents: Number of parents that are used to create the next generation.
+* permanent: Number of parents that will survive to the next generation.
+* hidden_size: Number of neurons in hidden layer.
 
+Example:
+```
+python train_Genetic.py 100 5 2 5
+```
+This will create a training with 100 players 5 parents 2 permanents with 5 neurons in the hidden layer
 
+It will save the neural networks of the best genetic player in the path "saved_models/genetic_\<generation>.pth"
 
-Training supervised algorithm:
+3. DQN:
 
-	Execute train_Supervised.py file: python train_Supervised.py
+As in the genetic algorith there are two version of this algorithm with and withoud GUI:
+train_DQN.py and train_DQN_no_GUI.py, which are executed the same way:
+```
+python train_DQN.py
 
-	It will show three columnsi:
+python train_DQN_no_GUI.py
+```
+Once the model is trained it is saved in "saved_models/final_DQN.pth".
 
-	number of iteration | the error | the relative error with the preavious iteration
+## Play:
+To play the game or check your trained agents execute the program "Play.py":
+```
+python Play.py
+```
+There are two human players controlled with either keyboard arrows and AWDS.
 
-	When the training is finished it will save the resulting network in the path: 
+Also a supervised, genetic and DQN player will be loaded, having those the names:
+"best_supervised.pth", "best_genetic.pth" and "best_DQN.pth", located in "saved_models"
+folder.
 
-	saved_models/final_supervised.pth 
-
-
-
-Training genetic algorithm:
-
-	You can train with GUI if you want to see a wonderful animation 
-	
-	of all the generations. Execute train_Genetic.py 
-
-	You need to give some parameters by konsole 
-
-		- Population: Number of geneticPlayers in each generation
-
-		- Parents: Number of geneticPlayers that are used to create the next generation
-
-		- Permanent parents: Number of parents that will survive to the next generation
-
-		- Hidden layer: Number of neurons in hidden layer
-
-	Example:  python train_Genetic.py 100 5 2 5
-
-	This will create a training with 100 players 5 parents 2 permanents with 5 neurons in the hidden layer
-
-	It will save the neural networks of the best geneticPlayer in the path: 
-
-	saved_models/genetic_<generation>.pth 
- 
-
-	If you want to do large trainings you can do the same training without GUI, it will save time
-
-	Execute train_Genetic_no_GUI.py 
-
-	Example: python train_Genetic_no_GUI.py 100 5 2 5
-	
-	In the same way the train_Genetic.py file if will save the neural network of the best geneticPlayer in the path: 
-
-	saved_models/final_genetic.pth 
-
-
-
-Training DQN:
-
-	Execute train_DQN_no_GUI.py file: python train_DQN_no_GUI.py
-
-	It will show a graph with the total reward in each generation
-
-	When the training is finished it will save the neural network of the best performance in the path: 
-
-	saved_models/final_DQN.pth 
-	
-	If you want to see the agent execute train_DQN.py file: python train_DQN.py
+You can try your own models by changing the model file inside Play.py or renaming 
+it as one of the above.
