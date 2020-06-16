@@ -29,7 +29,7 @@ player4 = NeuralPlayer(model_file='./saved_models/final_supervised.pth')
 player5 = NeuralPlayer(model_file='./saved_models/final_genetic.pth', color='red')
 
 # DQN player.
-player6 = DQNPlayer(model_file='./saved_models/final_DQN.pth')
+player6 = DQNPlayer(model_file='./saved_models/best_DQN.pth')
 
 controller.register_player(player)
 controller.register_player(player2)
