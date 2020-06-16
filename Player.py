@@ -148,7 +148,7 @@ class DQNPlayer(Player):
 
         # If model file is given, read structure and NN class.
         if model_file is not None:
-            model_dict = torch.load(model_file)
+            model_dict = torch.load(model_file, map_location=self.device)
             structure = model_dict['structure']
             self.network_class = model_dict['model_class']
 
@@ -237,7 +237,7 @@ class NeuralPlayer(Player):
             self.set_image(color)
 
         if model_file is not None:
-            model_info = torch.load(model_file)
+            model_info = torch.load(model_file, map_location=self.device)
             structure = model_info['structure']
             self.network_class = model_info['model_class']
 

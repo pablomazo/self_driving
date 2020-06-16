@@ -225,7 +225,6 @@ for episode in range(max_episodes):
         if done:
             reward_list.append(total_reward)
             print(episode, total_reward.cpu().item())
-            plot_durations()
             break
 
     # Save checkpoint.
