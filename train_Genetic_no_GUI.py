@@ -18,9 +18,9 @@ controller = Controller()
 controller.load_circuit()
 controller.register_genetic(genetic, GUI=False)
 
-n_change = 20
+n_change = 100
 best_fitness = 0
-for generation in range(100000):
+for generation in range(10000):
     try:
         print('Generation:', generation)
         #if generation % n_change == 0:

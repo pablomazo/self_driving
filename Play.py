@@ -26,7 +26,7 @@ player3 = HeuristicPlayer()
 player4 = NeuralPlayer(model_file='./saved_models/final_supervised.pth')
 
 # Genetic Player.
-player5 = NeuralPlayer(model_file='./saved_models/final_genetic.pth', color='red')
+player5 = NeuralPlayer(model_file='./saved_models/best_genetic.pth', color='red')
 
 # DQN player.
 player6 = DQNPlayer(model_file='./saved_models/final_DQN.pth')
