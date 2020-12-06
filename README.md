@@ -1,4 +1,4 @@
-# Sefl driving agents
+# Self driving agents
 
 Proyect to explore different training algorithms to make an agent complete 
 a circuit.
