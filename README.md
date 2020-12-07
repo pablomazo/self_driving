@@ -22,7 +22,7 @@ When train has finished the resulting model is saved to "saved_models/final_supe
 
 2. Genetic algorithm:
 
-There are two versions of this code with and withoud GUI: train_Genetic.py and train_Genetic_no_GUI.py 
+There are two versions of this code with and without GUI: train_Genetic.py and train_Genetic_no_GUI.py 
 which are executed the same way:
 ```
 python train_Genetic.py population parents permanent hidden_size
@@ -45,7 +45,7 @@ It will save the neural networks of the best genetic player in the path "saved_m
 
 3. DQN:
 
-As in the genetic algorith there are two version of this algorithm with and withoud GUI:
+As in the genetic algorith there are two version of this algorithm with and without GUI:
 train_DQN.py and train_DQN_no_GUI.py, which are executed the same way:
 ```
 python train_DQN.py
